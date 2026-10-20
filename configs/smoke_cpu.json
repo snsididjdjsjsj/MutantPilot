@@ -1,0 +1,28 @@
+{
+ "n_envs": 32,
+ "n_steps": 64,
+ "total_steps": 40960,
+ "device": "cpu",
+ "hidden": 128,
+ "epochs": 2,
+ "minibatches": 4,
+ "bc_steps": 128,
+ "n_workers": 2,
+ "save_every": 8192,
+ "ckpt_every": 20480,
+ "curriculum": {
+  "stages": "auto",
+  "threshold": 0.0,
+  "min_episodes": 2,
+  "window": 20,
+  "stage_max_steps": 4096,
+  "replay": 0.3,
+  "cycles": 1,
+  "attack_max_ticks": 600,
+  "p1_max_ticks": 600,
+  "p2_max_ticks": 600,
+  "p3_max_ticks": 600,
+  "full_max_ticks": 600
+ },
+ "out_dir": "runs/smoke"
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <tMLTargets Condition="'$(tMLTargets)' == '' AND Exists('$(MSBuildThisFileDirectory)..\tModLoader.targets')">$(MSBuildThisFileDirectory)..\tModLoader.targets</tMLTargets>
+    <tMLTargets Condition="'$(tMLTargets)' == ''">$(USERPROFILE)\Documents\My Games\Terraria\tModLoader\ModSources\tModLoader.targets</tMLTargets>
+  </PropertyGroup>
+  <Import Project="$(tMLTargets)" />
+  <PropertyGroup>
+    <AssemblyName>MutantPilot</AssemblyName>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <!-- The live search runs in the game update. Keep JIT optimization enabled even
+         when tModLoader builds the project with its default Debug configuration. -->
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,35 @@
+# Build
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Local runs, weights, recordings, fight logs
+runs/
+recordings/
+*.mp4
+*.wav
+*.pt
+*.onnx
+*.log
+*.jsonl
+*.jsonl.gz
+
+# Game and package files. Ship source, not saves or compiled mods.
+*.tmod
+*.wld
+*.twld
+*.plr
+*.wld.bak
+
+# OS
+Thumbs.db
+.DS_Store

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../mod/MutantPilot/Common/Combat/ForecastHazardIndex.cs" Link="ForecastHazardIndex.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/TemporalBuckets.cs" Link="TemporalBuckets.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/SmallBlastTiming.cs" Link="SmallBlastTiming.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/SpearTrail.cs" Link="SpearTrail.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/HazardForecast.cs" Link="HazardForecast.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/CombatPlanner.cs" Link="CombatPlanner.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/ThreatClearance.cs" Link="ThreatClearance.cs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../mod/MutantPilot/Common/Combat/RitualForecast.cs" Link="RitualForecast.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/CombatPlanner.cs" Link="CombatPlanner.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/HazardForecast.cs" Link="HazardForecast.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/SmallBlastTiming.cs" Link="SmallBlastTiming.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/SwordResponseForecast.cs" Link="SwordResponseForecast.cs" />
+  </ItemGroup>
+</Project>
