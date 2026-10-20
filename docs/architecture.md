@@ -6,7 +6,7 @@
 
 `Common/PilotHarness.cs` 监视存档目录中的 `command.json`，把结果写回 `status.json`。这是本机文件，不是网络服务。
 
-`Common/PilotWorld.cs` 读取受虐模式，并列出它认识的无敌或穿墙开关，供验收时剔除。`Common/PilotLink.cs` 是早先本机策略客户端的协议，只面向 `127.0.0.1:47000`。当前规划器不会创建它。对应的旧客户端在 `legacy/client/`。
+Common/PilotWorld.cs 读取受虐模式，并列出它认识的无敌或穿墙开关，供验收时剔除。
 
 录制在 `Common/LogicFrameRecorder.cs` 和 `Common/Combat/LogicVideoWriter.cs`。每个成功收下的游戏帧编码成一帧视频。
 
