@@ -17,6 +17,7 @@ namespace MutantPilot.Common
         static FieldInfo styxSet, styxMeter, styxReady, betsyDashing, specialDashCd, goldShell;
         static Player captured;
         static int width, height;
+        static int timeFrozenType=-1;
         static int betsyTicks;
         static bool previousDash;
         // BetsyDash: Projectile.timeLeft = 15 and BetsyDashing is set on every tick the dash
@@ -27,6 +28,7 @@ namespace MutantPilot.Common
         public static bool StyxSet { get; private set; }
         public static int StyxMeter { get; private set; }
         public static int StyxReady { get; private set; }
+        public static int TimeFrozenTicks { get; private set; }
         public static bool DashActive { get; private set; }
         public static int DashImmuneRemaining { get; private set; }
         // SpecialDashKey refuses to act while SpecialDashCD > 0 and then sets a 5 second (300 tick)
@@ -40,17 +42,23 @@ namespace MutantPilot.Common
         // counting how many times we called the effect.
         public static int DashStarts { get; private set; }
         public static ulong CapturedAt { get; private set; }
-        public static void Capture(Player player)
+        // Two hooks read this snapshot every frame: one inside the player update (PostUpdateRunSpeeds)
+        // and one at the end of the frame. Only the end-of-frame call sees the dash projectile's
+        // BetsyDashing flag, because FargoSoulsPlayer.ResetEffects clears it at the start of the next
+        // tick. The dash bookkeeping therefore runs only for frameEnd callers - counting both made the
+        // 15-tick dash look like fifteen separate starts and pinned remaining immunity at 14.
+        public static void Capture(Player player, bool frameEnd = false)
         {
             captured = player; width = player.width; height = player.height;
-            PrecisionActive = false; StyxSet = false; StyxMeter = StyxReady = 0; CapturedAt = Main.GameUpdateCount;
-            DashActive = false; DashImmuneRemaining = 0;
+            PrecisionActive = false; StyxSet = false; StyxMeter = StyxReady = TimeFrozenTicks = 0; CapturedAt = Main.GameUpdateCount;
+            if (frameEnd) { DashActive = false; DashImmuneRemaining = 0; }
             if (failed) return;
             try
             {
                 if (!initialized)
                 {
                     if (!ModLoader.TryGetMod("FargowiltasSouls", out Mod fargo)) return;
+                    if(fargo.TryFind("TimeFrozenBuff",out ModBuff frozenBuff))timeFrozenType=frozenBuff.Type;
                     fargoPlayerType = fargo.Code.GetType("FargowiltasSouls.Core.ModPlayers.FargoSoulsPlayer", true);
                     Type effect = fargo.Code.GetType("FargowiltasSouls.Content.Items.Accessories.Masomode.PrecisionSealHurtbox", true);
                     Type loader = fargo.Code.GetType("FargowiltasSouls.Core.AccessoryEffectSystem.AccessoryEffectLoader", true);
@@ -65,6 +73,8 @@ namespace MutantPilot.Common
                     goldShell = fargoPlayerType.GetField("GoldShell"); initialized = true;
                 }
                 object mp = null;
+                int frozenIndex=timeFrozenType<0?-1:player.FindBuffIndex(timeFrozenType);
+                if(frozenIndex>=0)TimeFrozenTicks=player.buffTime[frozenIndex];
                 foreach (ModPlayer candidate in player.ModPlayers)
                     if (candidate.GetType() == fargoPlayerType) { mp = candidate; break; }
                 if (mp == null) return;
@@ -73,14 +83,17 @@ namespace MutantPilot.Common
                 StyxReady = styxReady?.GetValue(mp) is int ready ? ready : 0;
                 // The dash lasts a fixed 15 ticks, so counting consecutive active ticks is enough
                 // to know how many planned ticks are still immune.
-                bool dashing = betsyDashing?.GetValue(mp) is true;
-                betsyTicks = dashing ? Math.Min(DashLength, betsyTicks + 1) : 0;
-                if (dashing && !previousDash) DashStarts++;
-                previousDash = dashing;
+                if (frameEnd)
+                {
+                    bool dashing = betsyDashing?.GetValue(mp) is true;
+                    betsyTicks = dashing ? Math.Min(DashLength, betsyTicks + 1) : 0;
+                    if (dashing && !previousDash) DashStarts++;
+                    previousDash = dashing;
+                    DashActive = dashing;
+                    DashImmuneRemaining = dashing ? Math.Max(0, DashLength - betsyTicks) : 0;
+                }
                 SpecialDashCooldown = specialDashCd?.GetValue(mp) is int cooldown ? cooldown : 0;
                 GoldShellActive = goldShell?.GetValue(mp) is true;
-                DashActive = dashing;
-                DashImmuneRemaining = dashing ? Math.Max(0, DashLength - betsyTicks) : 0;
                 if (hasPrecision.Invoke(null, new object[] { player }) is not true) return;
                 if (precisionBox?.Invoke(mp, null) is Rectangle rectangle && rectangle.Width > 0 && rectangle.Height > 0
                     && rectangle.Width <= player.width && rectangle.Height <= player.height
@@ -100,7 +113,7 @@ namespace MutantPilot.Common
             precisionActive = ReferenceEquals(captured, player) && PrecisionActive,
             projectileWidth = ProjectileHalf(player).X * 2, projectileHeight = ProjectileHalf(player).Y * 2,
             physicalWidth = player.width, physicalHeight = player.height,
-            StyxSet, StyxMeter, StyxReady, CapturedAt,
+            StyxSet, StyxMeter, StyxReady, TimeFrozenTicks, CapturedAt,
             dashActive = ReferenceEquals(captured, player) && DashActive,
             dashImmuneRemaining = ReferenceEquals(captured, player) ? DashImmuneRemaining : 0,
             specialDashCooldown = SpecialDashCooldown, dashStarts = DashStarts,

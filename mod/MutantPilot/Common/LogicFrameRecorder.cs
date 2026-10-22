@@ -19,7 +19,7 @@ namespace MutantPilot.Common
         static Color[] pixels;
         static int width,height,previewLimit;
         static bool armed,active,pacing;
-        static uint? finishAt;
+        static uint? finishAt,battleFirst,battleLast;
         static FrameSkipMode previousSkip;
         static bool previousFixed;
         static object outcome;
@@ -70,25 +70,27 @@ namespace MutantPilot.Common
                 presentation.DepthStencilFormat,0,RenderTargetUsage.PreserveContents);
             frameBinding=new[]{new RenderTargetBinding(frameTarget)};
             presenter=new SpriteBatch(Main.instance.GraphicsDevice);
-            string path=System.IO.Path.Combine(directory,$"{(previewFrames>0?"preview":"battle")}_{DateTime.Now:yyyyMMdd_HHmmss_fff}.mp4");
+            string path=System.IO.Path.Combine(directory,$"{(previewFrames>0?"preview":"battle")}_{DateTime.Now:yyyyMMdd_HHmmss_fff}.mkv");
             writer=new LogicVideoWriter(ffmpeg,path,width,height);
             version=ModContent.GetInstance<LogicFrameRecorder>().Mod.Version.ToString();
             pixels=new Color[checked(width*height)];sequence=new();
             using(var process=Process.GetCurrentProcess())memoryAtStart=peakMemory=process.PrivateMemorySize64;
-            previewLimit=Math.Clamp(previewFrames,0,36000);finishAt=null;outcome=null;failure=null;
+            previewLimit=Math.Clamp(previewFrames,0,36000);finishAt=battleFirst=battleLast=null;outcome=null;failure=null;
             previousSkip=Main.FrameSkipMode;previousFixed=Main.instance.IsFixedTimeStep;
             pacing=true;Main.FrameSkipMode=FrameSkipMode.Off;Main.instance.IsFixedTimeStep=false;
-            armed=previewLimit==0;active=previewLimit>0;
+            armed=previewLimit==0;active=true;
         }
         public static void BeginBattle()
         {
             if(!armed)return;
-            armed=false;active=true;sequence=new();finishAt=null;
+            armed=false;active=true;battleFirst=Main.GameUpdateCount;finishAt=null;
+            if(sequence.Frames==0||unchecked(Main.GameUpdateCount-sequence.Last)>2)
+            {failure="No continuous native render before summon";Stop("capture_error");}
         }
         public static void EndBattle(object result)
         {
             if(!active || previewLimit>0)return;
-            outcome=result;
+            outcome=result;battleLast=Main.GameUpdateCount;
             finishAt=unchecked(Main.GameUpdateCount+120); // Two seconds of real game frames after the result.
         }
         static void AfterDraw(GameTime time)
@@ -114,11 +116,15 @@ namespace MutantPilot.Common
                 var current=Main.instance.GraphicsDevice.PresentationParameters;
                 if(current.BackBufferWidth!=width || current.BackBufferHeight!=height)
                     throw new InvalidOperationException("Resolution changed while recording");
+                if(sequence.Frames==0&&battleFirst.HasValue&&Main.GameUpdateCount>battleFirst.Value)
+                    throw new InvalidOperationException("First battle render was missed");
                 if(!sequence.Accept(Main.GameUpdateCount))return;
                 if(sequence.Frames%300==0)
                 {
                     using var process=Process.GetCurrentProcess();long bytes=process.PrivateMemorySize64;
                     peakMemory=Math.Max(peakMemory,bytes);
+                    if(new DriveInfo(System.IO.Path.GetPathRoot(writer.Path)).AvailableFreeSpace<2L*1024*1024*1024)
+                        throw new IOException("Recording stopped: less than 2 GiB free; quality is never reduced");
                     if(bytes>6L*1024*1024*1024 || bytes>4L*1024*1024*1024 && bytes-memoryAtStart>1536L*1024*1024)
                         throw new InvalidOperationException("Recording stopped by memory growth guard");
                 }
@@ -140,14 +146,15 @@ namespace MutantPilot.Common
                 firstGameTick=sequence?.First,lastGameTick=sequence?.Last,missingGameFrames=sequence?.Missing??0,
                 memoryAtStartBytes=memoryAtStart,peakMemoryBytes=peakMemory,
                 source="uninterpolated native game render",timebase="one unique game world tick per video frame, 60 fps",
-                controllerVersion=version,battle=outcome});
+                controllerVersion=version,battleFirstGameTick=battleFirst,battleLastGameTick=battleLast,battle=outcome});
             frameTarget?.Dispose();frameTarget=null;frameBinding=null;
             presenter?.Dispose();presenter=null;
             pixels=null;
         }
         public static object Snapshot()=>new {armed,active,pacing,output=writer?.Path,
             frames=sequence?.Frames??0,written=writer?.FramesWritten??0,completed=writer?.Completed??false,
-            missingGameFrames=sequence?.Missing??0,error=failure??writer?.Error,audio=false,
+            width,height,lossless=true,worldTick=Main.GameUpdateCount,lastGameTick=sequence?.Last,
+            battleFirstGameTick=battleFirst,battleLastGameTick=battleLast,missingGameFrames=sequence?.Missing??0,error=failure??writer?.Error,audio=false,
             memoryAtStartBytes=memoryAtStart,peakMemoryBytes=peakMemory};
     }
 }

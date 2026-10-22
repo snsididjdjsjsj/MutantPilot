@@ -2,6 +2,12 @@ using System.Numerics;
 using System.Text.Json;
 using MutantPilot.Combat;
 
+LegendaryClockChecks.Run();
+LongWindowChecks.Run();
+TossRoutingChecks.Run();
+if(args.Contains("--legendary-sword-audit")){LegendaryClockChecks.Audit(args[0]);return;}
+if(args.Contains("--legendary-dash-audit")){LegendaryClockChecks.AuditDash(args[0],args[1]);return;}
+
 SmallEyeChecks.Run();
 DirectDashChecks.Run();
 EocBossChecks.Run();
@@ -50,7 +56,7 @@ Console.WriteLine("PASS locked Cthulhu eye redirects every native cycle and repr
 
 var fan = new MechFanForecast();
 fan.Update(27, 9, 1, 77, Vector2.Zero, true);
-if (fan.Paths.Count != 20 || fan.Paths[0].Birth.Born != 2 || fan.Paths[4].Birth.Born != 13)
+if (fan.Paths.Count != 4*(1+(CombatPlanner.ForecastTicks-2)/11) || fan.Paths[0].Birth.Born != 2 || fan.Paths[4].Birth.Born != 13)
     throw new Exception("mechanical rays must forecast all four native eleven-tick births before any projectile exists");
 FanRayPose newborn = fan.Paths[0].Poses[2];
 if (fan.Paths[0].Poses[1].Scale != 0 || Math.Abs(newborn.Scale - .0698116f) > .00001f
@@ -200,6 +206,12 @@ var nonfiniteMargin = new CombatPlanner().Choose(new(new(Vector2.Zero, Vector2.Z
         + ThreatClearance.Circle(p, Vector2.Zero, new(13, 24), float.NaN, 48), new(0, 3), 0, 0);
 Check(float.IsFinite(nonfiniteMargin.Cost) && JsonSerializer.Serialize(nonfiniteMargin).Length > 0,
     "a nonfinite external projectile cannot poison the comfort preference, selected route, or strict JSON telemetry");
+Check(ThreatClearance.Beam(new(100,25),Vector2.Zero,Vector2.UnitX,3000,22,new(10),48)>0
+    && ThreatClearance.Beam(new(100,80),Vector2.Zero,Vector2.UnitX,3000,22,new(10),48)==0
+    && ThreatClearance.Beam(new(-100,0),Vector2.Zero,Vector2.UnitX,3000,22,new(10),48)==0
+    && ThreatClearance.Beam(new(100,25),Vector2.Zero,new(100,0),3000,22,new(10),48)
+        ==ThreatClearance.Beam(new(100,25),Vector2.Zero,Vector2.UnitX,3000,22,new(10),48),
+    "beam clearance prefers room beside a live ray while keeping finite endpoints and direction scaling");
 var trackingMotion = new MotionModel { FlightMastery = true, MaxX = 18, WalkSpeed = 8.67f,
     Acceleration = 1.3125f, Braking = 1, StopBraking = 8, Gravity = .6f, MaxFall = 10.01f, JumpSpeed = 13.91f };
 var trackingPlanner = new CombatPlanner();
@@ -816,6 +828,17 @@ var cheapTurn = new CombatPlanner().Choose(turnFrame, corridorMotion, MultiTurn,
 var rescuedTurn = new CombatPlanner().Choose(turnFrame, corridorMotion, MultiTurn, new(0, 3), 0, 100);
 Check(cheapTurn.FirstHit > 0 && rescuedTurn.FirstHit == 0 && rescuedTurn.Horizon == CombatPlanner.ForecastTicks && rescuedTurn.RescueDepth >= 6,
     "bounded beam rescue finds two timed turns that constant inputs and a single turn cannot traverse");
+foreach(int width in new[]{12,36})
+{
+    var diverse=new CombatPlanner{DiverseRescue=true,RescueBeamWidth=width};
+    var route=diverse.Choose(turnFrame,corridorMotion,MultiTurn,new(0,3),0,192);
+    Check(route.FirstHit==0&&route.ForecastFirstHit==0&&diverse.RescueFrontierPeak<=width,
+        "diverse rescue retains the complete timed escape with bounded frontier width "+width);
+}
+var twoTickPlanner=new CombatPlanner{DiverseRescue=true,RescueBeamWidth=36,RescueSegmentTicks=2};
+var twoTickRoute=twoTickPlanner.Choose(turnFrame,corridorMotion,MultiTurn,new(0,3),0,192);
+Check(twoTickRoute.FirstHit==0&&twoTickRoute.ForecastFirstHit==0,
+    "two-tick rescue segmentation preserves the complete timed multi-turn escape");
 Check(!escaped.NoHitVictory, "damage plus survival or disappearance is not a victory");
 escaped.Kill();
 Check(escaped.NoHitVictory, "verified kill with zero hits passes");

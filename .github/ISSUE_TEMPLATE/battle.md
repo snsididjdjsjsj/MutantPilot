@@ -14,6 +14,7 @@ labels: ""
 ## 对局
 
 - 是否为单人 Masochist：
+- 是否同时打开大师和 For the Worthy：
 - 是否中途按过 F6：
 - Hurt 次数：
 - 日志里是否有 `boss_killed`：

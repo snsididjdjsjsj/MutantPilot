@@ -1,0 +1,4329 @@
+{
+  "note": "native 0.3.118 first Hurt; two radial Scythe2 axes intersect at actual eye lock, distinct from FTW accelerated NPC lock",
+  "a": {
+    "id": 215,
+    "name": "MutantScythe2",
+    "x": 78281.914,
+    "y": 14120.996,
+    "vx": 3.6191,
+    "vy": -0.7761239,
+    "width": 30,
+    "height": 30,
+    "scale": 1,
+    "ai": [
+      0.025,
+      -0.21125236,
+      0
+    ],
+    "localAI": [
+      0,
+      0,
+      0
+    ],
+    "rotation": 73.11143,
+    "frame": 0,
+    "frameCounter": 0,
+    "timeLeft": 126,
+    "canDamage": null
+  },
+  "b": {
+    "id": 309,
+    "name": "MutantScythe2",
+    "x": 78540.836,
+    "y": 14571.938,
+    "vx": 1.9289877,
+    "vy": -3.1589973,
+    "width": 30,
+    "height": 30,
+    "scale": 1,
+    "ai": [
+      0.025,
+      -1.0225949,
+      0
+    ],
+    "localAI": [
+      0,
+      0,
+      0
+    ],
+    "rotation": 69.70453,
+    "frame": 0,
+    "frameCounter": 0,
+    "timeLeft": 126,
+    "canDamage": null
+  },
+  "eyeLock": [
+    78896.70388813996,
+    13989.153048794626
+  ],
+  "bossLock": [
+    79063.91,
+    14014.567
+  ],
+  "scythe1": [
+    {
+      "id": 1,
+      "name": "MutantScythe1",
+      "x": 79075.46,
+      "y": 13907.234,
+      "vx": -9.557096,
+      "vy": -6.6228504,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.5355954,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.8817,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 6,
+      "name": "MutantScythe1",
+      "x": 78832.21,
+      "y": 14233.989,
+      "vx": 9.806147,
+      "vy": -6.248173,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.56730235,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.89253,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 7,
+      "name": "MutantScythe1",
+      "x": 78825.64,
+      "y": 14325.897,
+      "vx": 7.825424,
+      "vy": -8.600173,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.83253044,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.33458,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 13,
+      "name": "MutantScythe1",
+      "x": 78723.016,
+      "y": 14029.377,
+      "vx": -3.0475821,
+      "vy": 11.221067,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.8359938,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 85.91769,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 14,
+      "name": "MutantScythe1",
+      "x": 78797.51,
+      "y": 14120.962,
+      "vx": 7.792159,
+      "vy": 8.630319,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.8363911,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.929016,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 37,
+      "name": "MutantScythe1",
+      "x": 79068.695,
+      "y": 14075.048,
+      "vx": -0.41185343,
+      "vy": -11.620266,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.6062242,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 96.956024,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 39,
+      "name": "MutantScythe1",
+      "x": 78710.78,
+      "y": 14108.626,
+      "vx": 11.071863,
+      "vy": 3.5516186,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.31040922,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.15079,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 53,
+      "name": "MutantScythe1",
+      "x": 78546.41,
+      "y": 13842.539,
+      "vx": 8.288322,
+      "vy": 8.154993,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.77729,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 84.47797,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 55,
+      "name": "MutantScythe1",
+      "x": 78844.93,
+      "y": 14084.202,
+      "vx": 7.792159,
+      "vy": 8.630319,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.8363911,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.982956,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 60,
+      "name": "MutantScythe1",
+      "x": 79018.34,
+      "y": 14123.265,
+      "vx": 5.0526943,
+      "vy": -10.472366,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.1212639,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 85.331505,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 61,
+      "name": "MutantScythe1",
+      "x": 78758.2,
+      "y": 14071.866,
+      "vx": 11.071863,
+      "vy": 3.5516186,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.31040922,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.45114,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 66,
+      "name": "MutantScythe1",
+      "x": 79054.54,
+      "y": 14310.854,
+      "vx": 0.6039083,
+      "vy": -11.611868,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.5188353,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 97.372116,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 72,
+      "name": "MutantScythe1",
+      "x": 78775.78,
+      "y": 13859.732,
+      "vx": -5.4280086,
+      "vy": 10.282844,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.056491,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.99949,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 73,
+      "name": "MutantScythe1",
+      "x": 78811.555,
+      "y": 13907.9,
+      "vx": -5.4280086,
+      "vy": 10.282844,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.056491,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.898766,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 98,
+      "name": "MutantScythe1",
+      "x": 79057.19,
+      "y": 14133.935,
+      "vx": -0.41185343,
+      "vy": -11.620266,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.6062242,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.05872,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 101,
+      "name": "MutantScythe1",
+      "x": 79018.875,
+      "y": 13855.87,
+      "vx": -3.4664602,
+      "vy": -11.098821,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.8735234,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.25729,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 102,
+      "name": "MutantScythe1",
+      "x": 79007.37,
+      "y": 13914.757,
+      "vx": -3.4664602,
+      "vy": -11.098821,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.8735234,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.07158,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 103,
+      "name": "MutantScythe1",
+      "x": 78938.53,
+      "y": 13789.515,
+      "vx": -6.760542,
+      "vy": -9.460196,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.191274,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.14636,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 115,
+      "name": "MutantScythe1",
+      "x": 78900.664,
+      "y": 13699.03,
+      "vx": -7.056022,
+      "vy": 9.241901,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.22287,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 95.37554,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 133,
+      "name": "MutantScythe1",
+      "x": 78919.52,
+      "y": 13816.032,
+      "vx": -11.832553,
+      "vy": 1.8505476,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.9864547,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.13059,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 134,
+      "name": "MutantScythe1",
+      "x": 78870.95,
+      "y": 13815.391,
+      "vx": -11.483509,
+      "vy": -3.400421,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.8537054,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.204285,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 140,
+      "name": "MutantScythe1",
+      "x": 78978.67,
+      "y": 13826.102,
+      "vx": -11.832553,
+      "vy": 1.8505476,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.9864547,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.49023,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 142,
+      "name": "MutantScythe1",
+      "x": 79065.44,
+      "y": 14180.676,
+      "vx": 0.21735574,
+      "vy": -11.974409,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.5526466,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 95.11248,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 144,
+      "name": "MutantScythe1",
+      "x": 79053.93,
+      "y": 14239.5625,
+      "vx": 0.21735574,
+      "vy": -11.974409,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.5526466,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.93363,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 147,
+      "name": "MutantScythe1",
+      "x": 78852.66,
+      "y": 14168.453,
+      "vx": 10.10033,
+      "vy": -6.4356184,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.56730235,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.17275,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 166,
+      "name": "MutantScythe1",
+      "x": 79056.375,
+      "y": 13948.173,
+      "vx": -1.5336173,
+      "vy": -11.877788,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.6992023,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 97.02147,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 169,
+      "name": "MutantScythe1",
+      "x": 79044.87,
+      "y": 14007.06,
+      "vx": -1.5336173,
+      "vy": -11.877788,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.6992023,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 97.26941,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 170,
+      "name": "MutantScythe1",
+      "x": 78920.06,
+      "y": 13838.657,
+      "vx": -6.963358,
+      "vy": -9.744001,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.191274,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 97.84578,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 171,
+      "name": "MutantScythe1",
+      "x": 78843.125,
+      "y": 13787.613,
+      "vx": -10.504684,
+      "vy": -5.7519884,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.6406217,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 97.225235,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 172,
+      "name": "MutantScythe1",
+      "x": 78831.62,
+      "y": 13846.5,
+      "vx": -10.504684,
+      "vy": -5.7519884,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.6406217,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 93.974655,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 174,
+      "name": "MutantScythe1",
+      "x": 78820.664,
+      "y": 13825.653,
+      "vx": -11.94962,
+      "vy": -0.80026275,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -3.0747228,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.37433,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 175,
+      "name": "MutantScythe1",
+      "x": 78809.16,
+      "y": 13884.54,
+      "vx": -11.94962,
+      "vy": -0.80026275,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -3.0747228,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 93.78226,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 176,
+      "name": "MutantScythe1",
+      "x": 78855.38,
+      "y": 13829.455,
+      "vx": -11.578001,
+      "vy": 3.0633054,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.8829396,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 97.32108,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 177,
+      "name": "MutantScythe1",
+      "x": 78843.875,
+      "y": 13888.342,
+      "vx": -11.578001,
+      "vy": 3.0633054,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.8829396,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 97.363556,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 178,
+      "name": "MutantScythe1",
+      "x": 78909.234,
+      "y": 13790.785,
+      "vx": -10.598503,
+      "vy": 5.577247,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.6571822,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 95.78714,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 179,
+      "name": "MutantScythe1",
+      "x": 78963.91,
+      "y": 13723.193,
+      "vx": -9.591523,
+      "vy": 7.171935,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.4995418,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.287605,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 181,
+      "name": "MutantScythe1",
+      "x": 78819.61,
+      "y": 13797.025,
+      "vx": -6.598828,
+      "vy": 9.994463,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.1543422,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.02181,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 182,
+      "name": "MutantScythe1",
+      "x": 78897.73,
+      "y": 13849.672,
+      "vx": -10.598503,
+      "vy": 5.577247,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.6571822,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 95.40329,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 184,
+      "name": "MutantScythe1",
+      "x": 78952.4,
+      "y": 13782.08,
+      "vx": -9.591523,
+      "vy": 7.171935,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.4995418,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.45372,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 186,
+      "name": "MutantScythe1",
+      "x": 78662.41,
+      "y": 13937.101,
+      "vx": 6.3124275,
+      "vy": 10.1777725,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.0156441,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.022095,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 189,
+      "name": "MutantScythe1",
+      "x": 78867.03,
+      "y": 13760.266,
+      "vx": -6.598828,
+      "vy": 9.994463,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.1543422,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.203766,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 190,
+      "name": "MutantScythe1",
+      "x": 78760.04,
+      "y": 13891.205,
+      "vx": -5.476385,
+      "vy": 10.650964,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.045714,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.47954,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 192,
+      "name": "MutantScythe1",
+      "x": 78807.46,
+      "y": 13854.445,
+      "vx": -5.476385,
+      "vy": 10.650964,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.045714,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.52353,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 193,
+      "name": "MutantScythe1",
+      "x": 78574.69,
+      "y": 13929.109,
+      "vx": 8.809987,
+      "vy": 8.112832,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.7442251,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 84.66406,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 194,
+      "name": "MutantScythe1",
+      "x": 78755.96,
+      "y": 13718.279,
+      "vx": -1.4960247,
+      "vy": 11.882584,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.696038,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.98891,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 195,
+      "name": "MutantScythe1",
+      "x": 78727.74,
+      "y": 13990.069,
+      "vx": -3.490592,
+      "vy": 11.456422,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.8665452,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 96.22578,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 196,
+      "name": "MutantScythe1",
+      "x": 78775.164,
+      "y": 13953.31,
+      "vx": -3.490592,
+      "vy": 11.456422,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.8665452,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.21426,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 198,
+      "name": "MutantScythe1",
+      "x": 78738.12,
+      "y": 14079.923,
+      "vx": -0.14510518,
+      "vy": 11.97551,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.5829126,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.58982,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 199,
+      "name": "MutantScythe1",
+      "x": 78785.54,
+      "y": 14043.163,
+      "vx": -0.14510518,
+      "vy": 11.97551,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.5829126,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 93.12025,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 200,
+      "name": "MutantScythe1",
+      "x": 78718.3,
+      "y": 13743.024,
+      "vx": 0.23899864,
+      "vy": 11.974003,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.5508392,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.807755,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 201,
+      "name": "MutantScythe1",
+      "x": 78780.98,
+      "y": 14129.182,
+      "vx": 4.230498,
+      "vy": 11.204322,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.209768,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 93.18856,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 202,
+      "name": "MutantScythe1",
+      "x": 78828.4,
+      "y": 14092.422,
+      "vx": 4.230498,
+      "vy": 11.204322,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.209768,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.47935,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 203,
+      "name": "MutantScythe1",
+      "x": 78716.375,
+      "y": 13860.381,
+      "vx": 0.8352771,
+      "vy": 11.9472275,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.500996,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.153786,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 204,
+      "name": "MutantScythe1",
+      "x": 78725.67,
+      "y": 13975.278,
+      "vx": 1.7888681,
+      "vy": 11.842038,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.420869,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.63597,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 205,
+      "name": "MutantScythe1",
+      "x": 78782.59,
+      "y": 14115.44,
+      "vx": 10.309547,
+      "vy": 6.094843,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.5339122,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.1238,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 206,
+      "name": "MutantScythe1",
+      "x": 78830.016,
+      "y": 14078.681,
+      "vx": 10.309547,
+      "vy": 6.094843,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.5339122,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.41635,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 207,
+      "name": "MutantScythe1",
+      "x": 78597.766,
+      "y": 14117.828,
+      "vx": 11.971853,
+      "vy": 0.32947126,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.027513541,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.92783,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 208,
+      "name": "MutantScythe1",
+      "x": 79143.71,
+      "y": 14048.014,
+      "vx": -6.68192,
+      "vy": -9.939105,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.162679,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 93.41245,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 95,
+      "canDamage": null
+    },
+    {
+      "id": 209,
+      "name": "MutantScythe1",
+      "x": 78641.22,
+      "y": 14126.185,
+      "vx": 11.845863,
+      "vy": 1.7633394,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.1477719,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 95.05855,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 210,
+      "name": "MutantScythe1",
+      "x": 78676.8,
+      "y": 14087.661,
+      "vx": 11.500838,
+      "vy": 1.7119801,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.1477719,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.28045,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 211,
+      "name": "MutantScythe1",
+      "x": 79091.375,
+      "y": 14047.126,
+      "vx": -6.4873013,
+      "vy": -9.649617,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.162679,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 93.21158,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 214,
+      "name": "MutantScythe1",
+      "x": 78829.625,
+      "y": 14138.571,
+      "vx": 10.237979,
+      "vy": 5.5121636,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.4938963,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.64253,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 216,
+      "name": "MutantScythe1",
+      "x": 78656.53,
+      "y": 14163.6875,
+      "vx": 11.62735,
+      "vy": -0.069775485,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.0060009053,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 95.19411,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 217,
+      "name": "MutantScythe1",
+      "x": 78597.516,
+      "y": 14152.86,
+      "vx": 11.62735,
+      "vy": -0.069775485,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.0060009053,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.59054,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 218,
+      "name": "MutantScythe1",
+      "x": 78530.73,
+      "y": 13872.367,
+      "vx": 8.553386,
+      "vy": 7.876536,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.7442251,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 84.7417,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 219,
+      "name": "MutantScythe1",
+      "x": 78774.01,
+      "y": 14166.738,
+      "vx": 11.608672,
+      "vy": -0.662505,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.05700801,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 93.18143,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 220,
+      "name": "MutantScythe1",
+      "x": 78714.99,
+      "y": 14155.911,
+      "vx": 11.608672,
+      "vy": -0.662505,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.05700801,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.41993,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 221,
+      "name": "MutantScythe1",
+      "x": 78888.984,
+      "y": 14157.928,
+      "vx": 11.512281,
+      "vy": -1.6332614,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.14093073,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.62762,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 222,
+      "name": "MutantScythe1",
+      "x": 78829.97,
+      "y": 14147.101,
+      "vx": 11.512281,
+      "vy": -1.6332614,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.14093073,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.08911,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 225,
+      "name": "MutantScythe1",
+      "x": 78995.42,
+      "y": 14126.596,
+      "vx": 11.142943,
+      "vy": -3.3218963,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.28972793,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.9167,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 226,
+      "name": "MutantScythe1",
+      "x": 78936.41,
+      "y": 14115.769,
+      "vx": 11.142943,
+      "vy": -3.3218963,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.28972793,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.275826,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 227,
+      "name": "MutantScythe1",
+      "x": 79073.82,
+      "y": 14060.0625,
+      "vx": 9.879211,
+      "vy": -6.1319876,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.5554982,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.71082,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 228,
+      "name": "MutantScythe1",
+      "x": 79014.805,
+      "y": 14049.235,
+      "vx": 9.879211,
+      "vy": -6.1319876,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.5554982,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.55794,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 229,
+      "name": "MutantScythe1",
+      "x": 79092.29,
+      "y": 13976.09,
+      "vx": 6.7072115,
+      "vy": -9.49808,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.9559447,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.31655,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 230,
+      "name": "MutantScythe1",
+      "x": 79033.27,
+      "y": 13965.263,
+      "vx": 6.7072115,
+      "vy": -9.49808,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.9559447,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.97038,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 231,
+      "name": "MutantScythe1",
+      "x": 79066.31,
+      "y": 13937.023,
+      "vx": 2.117961,
+      "vy": -11.433044,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.3876238,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.2736,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 234,
+      "name": "MutantScythe1",
+      "x": 79007.3,
+      "y": 13926.196,
+      "vx": 2.117961,
+      "vy": -11.433044,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.3876238,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.45449,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 235,
+      "name": "MutantScythe1",
+      "x": 79057.57,
+      "y": 13957.596,
+      "vx": -1.922877,
+      "vy": -11.4674635,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.7369318,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.5753,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 236,
+      "name": "MutantScythe1",
+      "x": 78998.555,
+      "y": 13946.769,
+      "vx": -1.922877,
+      "vy": -11.4674635,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.7369318,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.502945,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 237,
+      "name": "MutantScythe1",
+      "x": 79088.42,
+      "y": 14005.356,
+      "vx": -4.6993937,
+      "vy": -10.635593,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.9868565,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.18442,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 239,
+      "name": "MutantScythe1",
+      "x": 79029.41,
+      "y": 13994.529,
+      "vx": -4.6993937,
+      "vy": -10.635593,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.9868565,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 94.38538,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 257,
+      "name": "MutantScythe1",
+      "x": 79111.234,
+      "y": 13955.402,
+      "vx": -9.557096,
+      "vy": -6.6228504,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.5355954,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 93.83346,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 258,
+      "name": "MutantScythe1",
+      "x": 78981.51,
+      "y": 13847.715,
+      "vx": -10.271356,
+      "vy": -5.449709,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.6537864,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.00312,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 259,
+      "name": "MutantScythe1",
+      "x": 79017.28,
+      "y": 13895.883,
+      "vx": -10.271356,
+      "vy": -5.449709,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.6537864,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 93.179276,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 261,
+      "name": "MutantScythe1",
+      "x": 78918.21,
+      "y": 13866.959,
+      "vx": -11.149038,
+      "vy": -3.3013797,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.8537054,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.774635,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 262,
+      "name": "MutantScythe1",
+      "x": 78796,
+      "y": 13836.188,
+      "vx": -11.623077,
+      "vy": 0.32295504,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        3.113814,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.745575,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 263,
+      "name": "MutantScythe1",
+      "x": 78831.77,
+      "y": 13884.356,
+      "vx": -11.623077,
+      "vy": 0.32295504,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        3.113814,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.799164,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 265,
+      "name": "MutantScythe1",
+      "x": 78756.64,
+      "y": 13879.877,
+      "vx": -10.59736,
+      "vy": 4.7849884,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.7174702,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.4408,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 267,
+      "name": "MutantScythe1",
+      "x": 78792.414,
+      "y": 13928.045,
+      "vx": -10.59736,
+      "vy": 4.7849884,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.7174702,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.7922,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 268,
+      "name": "MutantScythe1",
+      "x": 78762.48,
+      "y": 13894.215,
+      "vx": -8.1311035,
+      "vy": 8.311758,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.345208,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.18274,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 273,
+      "name": "MutantScythe1",
+      "x": 78798.25,
+      "y": 13942.383,
+      "vx": -8.1311035,
+      "vy": 8.311758,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.345208,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.250854,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 274,
+      "name": "MutantScythe1",
+      "x": 78774.97,
+      "y": 13791.734,
+      "vx": -3.1743984,
+      "vy": 11.185859,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.847313,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.95345,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 275,
+      "name": "MutantScythe1",
+      "x": 78810.74,
+      "y": 13839.902,
+      "vx": -3.1743984,
+      "vy": 11.185859,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.847313,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.04933,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 276,
+      "name": "MutantScythe1",
+      "x": 78793.23,
+      "y": 13754.564,
+      "vx": -1.4524512,
+      "vy": 11.5364895,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.696038,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.98285,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 279,
+      "name": "MutantScythe1",
+      "x": 78762.34,
+      "y": 13661.056,
+      "vx": -0.15563694,
+      "vy": 11.626516,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.5841819,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.49487,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 282,
+      "name": "MutantScythe1",
+      "x": 78728.4,
+      "y": 13671.95,
+      "vx": 0.23203751,
+      "vy": 11.625246,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.5508392,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.43837,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 283,
+      "name": "MutantScythe1",
+      "x": 78725.88,
+      "y": 13789.333,
+      "vx": 0.81094867,
+      "vy": 11.59925,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.500996,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.804016,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 284,
+      "name": "MutantScythe1",
+      "x": 78734.23,
+      "y": 13904.336,
+      "vx": 1.7367651,
+      "vy": 11.497125,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.420869,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.50386,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 285,
+      "name": "MutantScythe1",
+      "x": 78752.44,
+      "y": 14070.656,
+      "vx": 3.3069746,
+      "vy": 11.147383,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.2824072,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.22122,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 286,
+      "name": "MutantScythe1",
+      "x": 78762.78,
+      "y": 14011.556,
+      "vx": 3.3069746,
+      "vy": 11.147383,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.2824072,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 92.16003,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 287,
+      "name": "MutantScythe1",
+      "x": 78813.12,
+      "y": 14153.463,
+      "vx": 5.900265,
+      "vy": 10.019337,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.0385876,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.91149,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 288,
+      "name": "MutantScythe1",
+      "x": 78823.46,
+      "y": 14094.362,
+      "vx": 5.900265,
+      "vy": 10.019337,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.0385876,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.94329,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 289,
+      "name": "MutantScythe1",
+      "x": 78894.766,
+      "y": 14181.975,
+      "vx": 9.160678,
+      "vy": 7.161159,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.6634997,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.560486,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 290,
+      "name": "MutantScythe1",
+      "x": 78905.11,
+      "y": 14122.874,
+      "vx": 9.160678,
+      "vy": 7.161159,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.6634997,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.66643,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 291,
+      "name": "MutantScythe1",
+      "x": 78941.12,
+      "y": 14161.644,
+      "vx": 11.298524,
+      "vy": 2.7465503,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.23846398,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.31674,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 293,
+      "name": "MutantScythe1",
+      "x": 78951.46,
+      "y": 14102.543,
+      "vx": 11.298524,
+      "vy": 2.7465503,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.23846398,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.624725,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 294,
+      "name": "MutantScythe1",
+      "x": 78928.13,
+      "y": 14149.902,
+      "vx": 11.543646,
+      "vy": -1.3943876,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.12021023,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.75671,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 295,
+      "name": "MutantScythe1",
+      "x": 78938.48,
+      "y": 14090.802,
+      "vx": 11.543646,
+      "vy": -1.3943876,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.12021023,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.81912,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 296,
+      "name": "MutantScythe1",
+      "x": 78647.79,
+      "y": 14004.984,
+      "vx": 8.924183,
+      "vy": 7.453801,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.69586027,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.12074,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 297,
+      "name": "MutantScythe1",
+      "x": 78883.78,
+      "y": 14175.848,
+      "vx": 10.789534,
+      "vy": -4.334299,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.38198242,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 91.72843,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 298,
+      "name": "MutantScythe1",
+      "x": 78894.125,
+      "y": 14116.747,
+      "vx": 10.789534,
+      "vy": -4.334299,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.38198242,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.66676,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 299,
+      "name": "MutantScythe1",
+      "x": 78794.48,
+      "y": 14089.942,
+      "vx": 10.237979,
+      "vy": 5.5121636,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.4938963,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.181244,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 300,
+      "name": "MutantScythe1",
+      "x": 78929.695,
+      "y": 14162.341,
+      "vx": 11.187013,
+      "vy": 3.170323,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.27615246,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.78913,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 301,
+      "name": "MutantScythe1",
+      "x": 78894.55,
+      "y": 14113.712,
+      "vx": 11.187013,
+      "vy": 3.170323,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.27615246,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 84.93167,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 302,
+      "name": "MutantScythe1",
+      "x": 79013.05,
+      "y": 14136.398,
+      "vx": 11.602976,
+      "vy": -0.7557627,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.06504338,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.43028,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 303,
+      "name": "MutantScythe1",
+      "x": 78782.74,
+      "y": 14313.009,
+      "vx": 8.888057,
+      "vy": -7.496833,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.70069206,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.43347,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 304,
+      "name": "MutantScythe1",
+      "x": 78793.086,
+      "y": 14253.908,
+      "vx": 8.888057,
+      "vy": -7.496833,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.70069206,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.8777,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 306,
+      "name": "MutantScythe1",
+      "x": 78747.77,
+      "y": 14345.7295,
+      "vx": 8.104735,
+      "vy": -8.337476,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.7995521,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.891136,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 310,
+      "name": "MutantScythe1",
+      "x": 78777.16,
+      "y": 14361.241,
+      "vx": 7.825424,
+      "vy": -8.600173,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.83253044,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.28756,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 311,
+      "name": "MutantScythe1",
+      "x": 79043.49,
+      "y": 14090.187,
+      "vx": 10.3351965,
+      "vy": -5.3276467,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.47595924,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.65015,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 312,
+      "name": "MutantScythe1",
+      "x": 79008.34,
+      "y": 14041.558,
+      "vx": 10.3351965,
+      "vy": -5.3276467,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.47595924,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 85.282486,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 313,
+      "name": "MutantScythe1",
+      "x": 78984.8,
+      "y": 14156.543,
+      "vx": 6.7162313,
+      "vy": -9.491705,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.9549951,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.15828,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 315,
+      "name": "MutantScythe1",
+      "x": 78909.375,
+      "y": 14243.744,
+      "vx": 7.403865,
+      "vy": -8.965656,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.88051885,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.1423,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 316,
+      "name": "MutantScythe1",
+      "x": 78860.89,
+      "y": 14279.088,
+      "vx": 7.403865,
+      "vy": -8.965656,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.88051885,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.43492,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 317,
+      "name": "MutantScythe1",
+      "x": 78936.31,
+      "y": 14191.887,
+      "vx": 6.7162313,
+      "vy": -9.491705,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.9549951,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.21593,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 318,
+      "name": "MutantScythe1",
+      "x": 79020.71,
+      "y": 14195.702,
+      "vx": 2.887622,
+      "vy": -11.263298,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.3198272,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 83.499565,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 319,
+      "name": "MutantScythe1",
+      "x": 79043.39,
+      "y": 14062.162,
+      "vx": 5.4955473,
+      "vy": -10.246913,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.0785223,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.161125,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 320,
+      "name": "MutantScythe1",
+      "x": 78994.91,
+      "y": 14097.506,
+      "vx": 5.4955473,
+      "vy": -10.246913,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.0785223,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.195076,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 321,
+      "name": "MutantScythe1",
+      "x": 79069.05,
+      "y": 13962.434,
+      "vx": 3.2215064,
+      "vy": -11.172381,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.2900656,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.35467,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 322,
+      "name": "MutantScythe1",
+      "x": 79020.56,
+      "y": 13997.777,
+      "vx": 3.2215064,
+      "vy": -11.172381,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.2900656,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.06233,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 324,
+      "name": "MutantScythe1",
+      "x": 79045.99,
+      "y": 13877.948,
+      "vx": -0.6024779,
+      "vy": -11.611945,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.6226342,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.62107,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 325,
+      "name": "MutantScythe1",
+      "x": 78997.51,
+      "y": 13913.292,
+      "vx": -0.6024779,
+      "vy": -11.611945,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.6226342,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.93068,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 327,
+      "name": "MutantScythe1",
+      "x": 79000.48,
+      "y": 13844.416,
+      "vx": -5.1436367,
+      "vy": -10.427995,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.0290313,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.07836,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 328,
+      "name": "MutantScythe1",
+      "x": 78951.99,
+      "y": 13879.76,
+      "vx": -5.1436367,
+      "vy": -10.427995,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.0290313,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.64274,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 330,
+      "name": "MutantScythe1",
+      "x": 78990.12,
+      "y": 13854.178,
+      "vx": -8.564642,
+      "vy": -7.864291,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.3987978,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 85.43862,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 331,
+      "name": "MutantScythe1",
+      "x": 78941.63,
+      "y": 13889.521,
+      "vx": -8.564642,
+      "vy": -7.864291,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.3987978,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.52829,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 332,
+      "name": "MutantScythe1",
+      "x": 79029.16,
+      "y": 13867.77,
+      "vx": -10.410674,
+      "vy": -5.1786084,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.6800013,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.33023,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 333,
+      "name": "MutantScythe1",
+      "x": 78980.67,
+      "y": 13903.113,
+      "vx": -10.410674,
+      "vy": -5.1786084,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.6800013,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 85.71914,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 335,
+      "name": "MutantScythe1",
+      "x": 79051.67,
+      "y": 13901.305,
+      "vx": -11.238228,
+      "vy": -2.9836726,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -2.8820863,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.33198,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 345,
+      "name": "MutantScythe1",
+      "x": 79046.336,
+      "y": 13805.92,
+      "vx": -11.593327,
+      "vy": 0.8916079,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        3.0648367,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 90.14553,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 348,
+      "name": "MutantScythe1",
+      "x": 78823.766,
+      "y": 13841.622,
+      "vx": -11.145669,
+      "vy": 3.3127437,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.852686,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 85.68186,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 349,
+      "name": "MutantScythe1",
+      "x": 78882.914,
+      "y": 13851.691,
+      "vx": -11.145669,
+      "vy": 3.3127437,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.852686,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.92324,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 350,
+      "name": "MutantScythe1",
+      "x": 78739.09,
+      "y": 13899.665,
+      "vx": -10.075329,
+      "vy": 5.80413,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.618952,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 84.68429,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 351,
+      "name": "MutantScythe1",
+      "x": 78798.24,
+      "y": 13909.734,
+      "vx": -10.075329,
+      "vy": 5.80413,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.618952,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.6523,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 352,
+      "name": "MutantScythe1",
+      "x": 78705.914,
+      "y": 13979.803,
+      "vx": -7.3625884,
+      "vy": 8.999582,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.256479,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.66922,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 353,
+      "name": "MutantScythe1",
+      "x": 78765.06,
+      "y": 13989.872,
+      "vx": -7.3625884,
+      "vy": 8.999582,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        2.256479,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.745926,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 356,
+      "name": "MutantScythe1",
+      "x": 78782.164,
+      "y": 14039.446,
+      "vx": -3.0475821,
+      "vy": 11.221067,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.8359938,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.702286,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 357,
+      "name": "MutantScythe1",
+      "x": 78735.84,
+      "y": 14020.269,
+      "vx": 1.1308156,
+      "vy": 11.572442,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.4733894,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.1324,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 358,
+      "name": "MutantScythe1",
+      "x": 78794.99,
+      "y": 14030.338,
+      "vx": 1.1308156,
+      "vy": 11.572442,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.4733894,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 85.84421,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 359,
+      "name": "MutantScythe1",
+      "x": 78712.29,
+      "y": 13977.817,
+      "vx": 4.150387,
+      "vy": 10.861602,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.2058021,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 88.86027,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 360,
+      "name": "MutantScythe1",
+      "x": 78771.44,
+      "y": 13987.887,
+      "vx": 4.150387,
+      "vy": 10.861602,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.2058021,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.07483,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 361,
+      "name": "MutantScythe1",
+      "x": 78715.24,
+      "y": 13936.992,
+      "vx": 6.1285706,
+      "vy": 9.881332,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        1.0156441,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 83.72173,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 362,
+      "name": "MutantScythe1",
+      "x": 78578.33,
+      "y": 13877.632,
+      "vx": 7.4201045,
+      "vy": 8.95222,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.8787059,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 89.36731,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 363,
+      "name": "MutantScythe1",
+      "x": 78637.48,
+      "y": 13887.701,
+      "vx": 7.4201045,
+      "vy": 8.95222,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.8787059,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 84.83207,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 365,
+      "name": "MutantScythe1",
+      "x": 78612.64,
+      "y": 13956.355,
+      "vx": 8.924183,
+      "vy": 7.453801,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.69586027,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 84.27636,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 367,
+      "name": "MutantScythe1",
+      "x": 78734.945,
+      "y": 14080.432,
+      "vx": 9.461508,
+      "vy": 6.758706,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.6202837,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.54113,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 368,
+      "name": "MutantScythe1",
+      "x": 78699.8,
+      "y": 14031.803,
+      "vx": 9.461508,
+      "vy": 6.758706,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        0.6202837,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 84.74034,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 369,
+      "name": "MutantScythe1",
+      "x": 78977.9,
+      "y": 14087.77,
+      "vx": 11.602976,
+      "vy": -0.7557627,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.06504338,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 86.54767,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 370,
+      "name": "MutantScythe1",
+      "x": 79031.95,
+      "y": 14081.962,
+      "vx": 7.7264833,
+      "vy": -8.68917,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.84397537,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 85.531364,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 371,
+      "name": "MutantScythe1",
+      "x": 78996.805,
+      "y": 14033.333,
+      "vx": 7.7264833,
+      "vy": -8.68917,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -0.84397537,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 83.31343,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 373,
+      "name": "MutantScythe1",
+      "x": 78983.195,
+      "y": 14074.636,
+      "vx": 5.0526943,
+      "vy": -10.472366,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.1212639,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 83.96463,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 374,
+      "name": "MutantScythe1",
+      "x": 78985.56,
+      "y": 14147.073,
+      "vx": 2.887622,
+      "vy": -11.263298,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.3198272,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 85.59273,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 375,
+      "name": "MutantScythe1",
+      "x": 79039.6,
+      "y": 14283.645,
+      "vx": 1.2507972,
+      "vy": -11.560096,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.463016,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 82.597916,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    },
+    {
+      "id": 376,
+      "name": "MutantScythe1",
+      "x": 79004.45,
+      "y": 14235.016,
+      "vx": 1.2507972,
+      "vy": -11.560096,
+      "width": 30,
+      "height": 30,
+      "scale": 1,
+      "ai": [
+        0.03,
+        -1.463016,
+        0
+      ],
+      "localAI": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 87.60833,
+      "frame": 0,
+      "frameCounter": 0,
+      "timeLeft": 96,
+      "canDamage": null
+    }
+  ]
+}

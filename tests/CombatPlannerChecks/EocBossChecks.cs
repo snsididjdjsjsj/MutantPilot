@@ -25,5 +25,33 @@ static class EocBossChecks
             count++;max=Math.Max(max,error);
         }
         Console.WriteLine($"PASS locked EOC boss {count} native future windows, max error {max:F6}px");
+        var native=JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"tests","fixtures","eoc_eye_lock_118.json"))).RootElement;
+        Vector2 Lock(string name){var v=native.GetProperty(name);return new(v[0].GetSingle(),v[1].GetSingle());}
+        Vector2 eye=Lock("eyeLock"),npc=Lock("bossLock");
+        if(Vector2.Distance(eye,npc)<160)throw new Exception("native FTW regression must retain distinct NPC and projectile lock points");
+        foreach(string key in new[]{"a","b"})
+        {
+            var scythe=native.GetProperty(key);float angle=scythe.GetProperty("ai")[1].GetSingle();
+            Vector2 delta=eye-new Vector2(scythe.GetProperty("x").GetSingle(),scythe.GetProperty("y").GetSingle());
+            if(Math.Abs(delta.X*MathF.Sin(angle)-delta.Y*MathF.Cos(angle))>.02f)
+                throw new Exception("actual eye lock must lie on both independently observed native radial scythe axes");
+        }
+        float eyeGap=float.PositiveInfinity,npcGap=float.PositiveInfinity;
+        foreach(var scythe in native.GetProperty("scythe1").EnumerateArray())
+        {
+            float angle=scythe.GetProperty("ai")[1].GetSingle();
+            Vector2 p=new(scythe.GetProperty("x").GetSingle(),scythe.GetProperty("y").GetSingle());
+            float Gap(Vector2 c)=>Math.Abs((c.X-p.X)*MathF.Sin(angle)-(c.Y-p.Y)*MathF.Cos(angle));
+            eyeGap=Math.Min(eyeGap,Gap(eye));npcGap=Math.Min(npcGap,Gap(npc));
+        }
+        if(eyeGap<80||npcGap>2)
+            throw new Exception("native Scythe1 axes must preserve the actual eye centre opening while crossing the old NPC target");
+        var routing=new EocRouting();routing.Observe(119,npc);
+        if(routing.Center.HasValue)throw new Exception("routing must not use an unlocked eye localAI");
+        routing.Observe(120,eye);
+        if(routing.Center!=eye)throw new Exception("routing must use the native projectile lock, not the faster NPC clock");
+        routing.Reset();
+        if(routing.Center.HasValue)throw new Exception("a new eye phase must not reuse a previous eye lock");
+        Console.WriteLine($"PASS native FTW eye/NPC locks differ {Vector2.Distance(eye,npc):F2}px; observed Scythe1 line gaps {eyeGap:F2}/{npcGap:F2}px; routing waits for projectile lock");
     }
 }

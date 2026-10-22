@@ -15,21 +15,32 @@ namespace MutantPilot.Combat
         readonly Dictionary<(int Parent, Vector2 Player, int Tick), int> cache = new(8192);
         readonly List<SwordPart> parts = new(16);
         float angularStep;
+        int hyperPhase;
         public int Count => worlds.Count;
-        public void Reset(SwordWorld initial, float step, IEnumerable<SwordPart> swords)
+        public void Reset(SwordWorld initial, float step, IEnumerable<SwordPart> swords,int legendaryHyper=-1)
         {
             worlds.Clear(); cache.Clear(); worlds.Add(initial);
             parts.Clear(); parts.AddRange(swords); angularStep=step;
+            hyperPhase=legendaryHyper;
         }
         public SwordWorld At(float reference) => worlds[(int)reference];
         public float Advance(float reference, MotionState player, int tick)
         {
             int parent=(int)reference;var key=(parent,player.Position,tick);
             if(cache.TryGetValue(key,out int found))return found;
-            SwordWorld next=Step(worlds[parent],player.Position,tick,angularStep) with {Parent=parent};
+            SwordWorld next=GameFrame(worlds[parent],player.Position,tick,angularStep,EncounterClock.UpdatesAt(hyperPhase,tick)) with {Parent=parent};
             if(worlds[parent].Arena is Vector2 arena)
                 next=next with {Arena=next.ForcedDeath<0?RitualForecast.Step(arena,next.Position,45,next.Timer,player.Position):null};
             int id=worlds.Count;worlds.Add(next);cache.Add(key,id);return id;
+        }
+        public static SwordWorld GameFrame(SwordWorld world,Vector2 player,int tick,float step,int updates)
+        {
+            SwordWorld before=world;
+            for(int update=0;update<updates;update++)world=Step(world with {Position=before.Position},player,tick,step);
+            if(before.ForcedDeath<0&&world.ForcedDeath>=0)
+                world=world with {DeathPosition=before.Position,DeathAngle=before.Angle};
+            return world with {Position=before.Position+world.Velocity,
+                PreviousPosition=before.Position,PreviousAngle=before.Angle};
         }
         public static SwordWorld Step(SwordWorld world, Vector2 player, int tick, float step)
         {

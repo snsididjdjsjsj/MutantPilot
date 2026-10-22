@@ -5,6 +5,20 @@ using System.Numerics;
 
 namespace MutantPilot.Combat
 {
+    public static class EncounterClock
+    {
+        public static int UpdatesAt(int phase,int tick)
+        {
+            int first=7-phase;
+            return phase>=0&&tick>=first&&(tick-first)%6==0?2:1;
+        }
+        public static int Next(ref int phase)
+        {
+            if(phase<0)return 1;
+            if(++phase<=6)return 1;
+            phase=1;return 2;
+        }
+    }
     // This core has no Terraria dependency: replay and regression checks run without the game.
     public readonly record struct Move(int Horizontal, int Vertical)
     {
@@ -23,6 +37,14 @@ namespace MutantPilot.Combat
         int Horizon, double Milliseconds, float Cost, int FirstHit, int RescueDepth, int ForecastFirstHit,
         int DangerQueries, int CachedQueries, float NextAngle = 0);
 
+    public readonly record struct RouteCode(UInt128 Low, UInt128 High)
+    {
+        public static implicit operator RouteCode(int value)=>new((UInt128)(uint)value,0);
+        public RouteCode Append(int segment,int input)=>segment<32
+            ?this with {Low=Low|((UInt128)(uint)input<<(segment*4))}
+            :this with {High=High|((UInt128)(uint)input<<((segment-32)*4))};
+        public int At(int segment)=>(int)(((segment<32?Low>>(segment*4):High>>((segment-32)*4)))&15);
+    }
     public sealed class MotionModel
     {
         public float MaxX = 18, Acceleration = .75f, Braking = 1;
@@ -160,7 +182,7 @@ namespace MutantPilot.Combat
 
     public sealed class CombatPlanner
     {
-        public const int ForecastTicks = 48;
+        public const int ForecastTicks = 72;
         // Hazards past SafetyTicks are discounted to 1% of their value (max 500k), i.e. below the hit
         // threshold, so THIS is the real avoidance horizon, not ForecastTicks. Measured behaviour:
         // every recorded trap closed 21 to 34 ticks before impact, right at this edge.
@@ -171,7 +193,7 @@ namespace MutantPilot.Combat
         static float TimedRisk(float risk, int tick) => tick <= SafetyTicks ? risk : Math.Min(500000, risk * .01f);
         readonly record struct Node(MotionState State, Move First, Move Last, float Cost, int FirstHit, int ForecastFirstHit);
         readonly record struct BeamNode(MotionState State, Move First, Move Last, float Cost,
-            int FirstHit, int ForecastFirstHit, ulong Code, float Score, float Angle);
+            int FirstHit, int ForecastFirstHit, RouteCode Code, float Score, float Angle);
         readonly List<Node> candidates = new(12);
         readonly List<BeamNode> beam = new(12);
         readonly List<BeamNode> branches = new(144);
@@ -193,6 +215,10 @@ namespace MutantPilot.Combat
         public int[] SelectedRoute => Array.ConvertAll(solution,move=>move.Id);
         public float GoalPullDivisor { get; set; } = 250000;
         public int ProposalBudget { get; set; }
+        public int RescueBeamWidth { get; set; } = 12;
+        public int RescueSegmentTicks { get; set; } = 3;
+        public bool DiverseRescue { get; set; }
+        public int RescueFrontierPeak { get; private set; }
 
         static int Compare(Node a, Node b)
         {
@@ -234,6 +260,7 @@ namespace MutantPilot.Combat
             bool coupled, float initialAngle, Func<float, MotionState, int, float> advance,
             Move previous, double budgetMs, double rescueBudgetMs, Vector2[] goalPath = null!)
         {
+            RescueFrontierPeak=0;
             Vector2 GoalAt(int tick) => goalPath == null ? frame.Goal : goalPath[Math.Min(tick, ForecastTicks)];
             var watch = Stopwatch.StartNew();
             ReactiveProposals = 0;
@@ -458,8 +485,10 @@ namespace MutantPilot.Combat
             if (best.FirstHit != 1 && best.ForecastFirstHit > 0 && rescueBudgetMs > 0)
             {
                 double deadline = rescueDeadline;
+                int segmentTicks=Math.Clamp(RescueSegmentTicks,2,3);
+                int segments=ForecastTicks/segmentTicks;
                 beam.Clear(); beam.Add(new(frame.Player, previous, previous, 0, 0, 0, 0, 0, initialAngle));
-                for (int segment = 0; segment < ForecastTicks / 3; segment++)
+                for (int segment = 0; segment < segments; segment++)
                 {
                     branches.Clear();
                     foreach (BeamNode parent in beam)
@@ -473,9 +502,9 @@ namespace MutantPilot.Combat
                             int firstHit = parent.FirstHit;
                             int forecastFirstHit = parent.ForecastFirstHit;
                             bool dominated = false;
-                            for (int step = 1; step <= 3; step++)
+                            for (int step = 1; step <= segmentTicks; step++)
                             {
-                                int future = segment * 3 + step;
+                                int future = segment * segmentTicks + step;
                                 state = motion.Step(state, move);
                                 if (advance != null) angle = advance(angle, state, future);
                                 float rawRisk = RiskAt(state, future, angle);
@@ -498,23 +527,23 @@ namespace MutantPilot.Combat
                                 { dominated = true; break; }
                             }
                             if (dominated) continue;
-                            rescueDepth = Math.Max(rescueDepth, (segment + 1) * 3);
+                            rescueDepth = Math.Max(rescueDepth, (segment + 1) * segmentTicks);
                             Move first = segment == 0 ? move : parent.First;
-                            ulong code = parent.Code | ((ulong)id << (segment * 4));
-                            if (segment == ForecastTicks / 3 - 1)
+                            RouteCode code = parent.Code.Append(segment,id);
+                            if (segment == segments - 1)
                             {
                                 Node node = new(state, first, move, cost, firstHit, forecastFirstHit);
                                 if (Compare(node, best) < 0)
                                 {
-                                    for (int t = 0; t < ForecastTicks; t++) trial[t] = Move.FromId((int)((code >> (t / 3 * 4)) & 15));
+                                    for (int t = 0; t < ForecastTicks; t++) trial[t] = Move.FromId(code.At(t / segmentTicks));
                                     Consider(node, 0, true);
                                 }
                             }
                             else branches.Add(new(state, first, move, cost, firstHit, forecastFirstHit, code,
-                                cost + Vector2.DistanceSquared(state.Position, GoalAt(ForecastTicks)) / 250000f * (ForecastTicks - (segment + 1) * 3), angle));
+                                cost + Vector2.DistanceSquared(state.Position, GoalAt(ForecastTicks)) / 250000f * (ForecastTicks - (segment + 1) * segmentTicks), angle));
                         }
-                    rescueDepth = (segment + 1) * 3;
-                    if (segment == ForecastTicks / 3 - 1 || branches.Count == 0) break;
+                    rescueDepth = (segment + 1) * segmentTicks;
+                    if (segment == segments - 1 || branches.Count == 0) break;
                     branches.Sort((a, b) =>
                     {
                         int safeA = a.FirstHit == 0 ? int.MaxValue : a.FirstHit;
@@ -531,14 +560,27 @@ namespace MutantPilot.Combat
                     if (watch.Elapsed.TotalMilliseconds < deadline)
                     {
                         Array.Copy(bestSequence, trial, ForecastTicks);
-                        ulong prefix = branches[0].Code;
-                        for (int t = 0; t < (segment + 1) * 3; t++) trial[t] = Move.FromId((int)((prefix >> (t / 3 * 4)) & 15));
+                        RouteCode prefix = branches[0].Code;
+                        for (int t = 0; t < (segment + 1) * segmentTicks; t++) trial[t] = Move.FromId(prefix.At(t / segmentTicks));
                         Consider(Rollout(trial[0], trial[^1], 0, true), 0, true);
                         if (best.ForecastFirstHit == 0) break;
                     }
                     beam.Clear();
+                    int width=Math.Clamp(RescueBeamWidth,12,48);
+                    if(DiverseRescue)
+                    {
+                        int firstMoves=0;
+                        foreach(BeamNode node in branches)
+                        {
+                            int bit=1<<node.First.Id;
+                            if((firstMoves&bit)!=0)continue;
+                            beam.Add(node);firstMoves|=bit;
+                            if(beam.Count==width)break;
+                        }
+                    }
                     foreach (BeamNode node in branches)
                     {
+                        if(beam.Count>=width)break;
                         bool duplicate = false;
                         foreach (BeamNode selected in beam)
                             if (node.Angle == selected.Angle && node.State.Dash == selected.State.Dash
@@ -546,8 +588,9 @@ namespace MutantPilot.Combat
                                 && Vector2.DistanceSquared(node.State.Velocity, selected.State.Velocity) < .04f)
                             { duplicate = true; break; }
                         if (!duplicate) beam.Add(node);
-                        if (beam.Count == 12) break;
+                        if (beam.Count == width) break;
                     }
+                    RescueFrontierPeak=Math.Max(RescueFrontierPeak,beam.Count);
                 }
             }
             RescueDone:

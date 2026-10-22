@@ -88,12 +88,22 @@ def summarize(path):
         ticks = (result or {}).get("ticks", max((f["tick"] for f in frames), default=0))
         actual_damage = sum(max(0, d.get("amount", 0)) for d in damages)
         assisted = bool((result or {}).get("assisted")) or any(f.get("assisted") for f in frames)
+        skills_permitted = header.get("accessorySkillsAllowed") is True
+        dash_ticks = (result or {}).get("dashImmuneTicks") or 0
+        skill_usage = (result or {}).get("accessorySkillUsage") or {}
+        no_dash_policy = header.get("dashesAllowed") is False
+        dash_policy_valid = not no_dash_policy or bool(result and result.get("dashesAllowed") is False
+            and result.get("dashMovementTicks") == 0 and result.get("dashImmuneTicks") == 0
+            and not skill_usage.get("fired", 0) and not skill_usage.get("starts", 0)
+            and not any(f.get("dashDelay", 0) < 0 for f in frames))
         verified = bool(result and result.get("killed") and result.get("noHitVictory")
                         and header.get("masochist") and result.get("masochist")
                         and not assisted and not hits and result.get("hits") == 0
                         and header.get("developmentSeed") is None and result.get("developmentSeed") is None
                         and actual_damage > 0 and malformed == 0
                         and result.get("rejectedRecords", 0) == 0
+                        and (skills_permitted or dash_ticks == 0)
+                        and dash_policy_valid
                         and not any(f.get("spatialAuditMismatches", 0) for f in frames))
         no_gold_verified = bool(verified and header.get("goldenStasisAllowed") is False
                                 and result.get("goldShellTicks") == 0
@@ -171,7 +181,19 @@ def summarize(path):
                 "result": result, "development_seed": header.get("developmentSeed"), "world": header.get("world"),
                 "verified_no_hit_victory": verified,
                 "verified_no_gold_no_hit_victory": no_gold_verified,
+                "verified_legendary_no_gold_no_hit_victory": bool(no_gold_verified and all(
+                    record.get("difficulty", {}).get(key) is True
+                    for record in (header, result or {}) for key in ("master", "forTheWorthy", "legendary"))),
+                "difficulty": header.get("difficulty"),
                 "gold_shell_ticks": (result or {}).get("goldShellTicks"),
+                "accessory_skills_allowed": header.get("accessorySkillsAllowed"),
+                "dashes_allowed": header.get("dashesAllowed"),
+                "dash_policy_valid": dash_policy_valid,
+                "native_dash_movement_ticks": (result or {}).get("dashMovementTicks"),
+                "armor_skill_usage": (result or {}).get("armorSkillUsage"),
+                "accessory_dash_immune_ticks": dash_ticks,
+                "accessory_dash_presses": skill_usage.get("fired"),
+                "accessory_dash_starts": skill_usage.get("starts"),
                 "malformed_records": malformed}
     ticks = max((f.get("t", 0) for f in frames), default=-1) + 1
     return {"file": str(path), "source": "legacy-recorder", "seconds": round(ticks / 60, 2),

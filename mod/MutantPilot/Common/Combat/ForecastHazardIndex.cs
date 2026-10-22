@@ -17,6 +17,11 @@ namespace MutantPilot.Combat
         Vector2 half;
         float reserve;
         readonly ParallelOptions workers = new() { MaxDegreeOfParallelism = Math.Min(4, Environment.ProcessorCount) };
+        public int WorkerCount
+        {
+            get=>workers.MaxDegreeOfParallelism;
+            set=>workers.MaxDegreeOfParallelism=Math.Clamp(value,1,Math.Max(1,Math.Min(16,Environment.ProcessorCount)));
+        }
         public bool LastBuildParallel { get; private set; }
         public ForecastHazardIndex(int horizon)
         {

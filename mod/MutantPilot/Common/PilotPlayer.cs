@@ -26,8 +26,9 @@ namespace MutantPilot.Common
             float minimum = Main.topWorld + 656 + Player.height / 2f;
             float airBottom = System.Math.Max(minimum + 240, (float)Main.worldSurface * 16 - 1000);
             prepareY = (minimum + airBottom) * .5f;
-            prepareTicks = 2400;
+            prepareTicks = 10800; // Permit ordinary regeneration after a failed low-life trial.
             prepareReached = System.Math.Abs(Player.Center.Y - prepareY) <= 24;
+            TrialSummons.Begin(Player);
             return null;
         }
         public object Snapshot() => new {
@@ -40,7 +41,7 @@ namespace MutantPilot.Common
             hits = session?.Metrics.Hits ?? 0, assisted = session?.Metrics.Assisted ?? false,
             controllerMs = combat?.TotalMilliseconds ?? 0,
             modelError = combat?.PredictionError ?? 0, lastResult,
-            prepareTicks, prepareY, prepareReached, attackStuck,
+            prepareTicks, prepareY, prepareReached, attackStuck,summonPreparation=TrialSummons.Snapshot(Player),
             motion = observedMotion.Parameters,
             hotbar = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Select(
                 System.Linq.Enumerable.Range(0, 10), i => new { slot = i, name = Player.inventory[i].Name,
@@ -87,7 +88,7 @@ namespace MutantPilot.Common
                 prepareReached |= System.Math.Abs(Player.Center.Y - prepareY) <= 24;
                 int vertical = prepareReached ? 3 : Player.Center.Y > prepareY ? 2 : 0;
                 PilotControls.Apply(Player, new Move(0, vertical));
-                Player.controlUseItem = false;
+                TrialSummons.Step(Player);
                 return;
             }
             if (alive) prepareTicks = 0;
@@ -106,6 +107,7 @@ namespace MutantPilot.Common
             CombatFrameTiming.Controller(combat.TotalMilliseconds);
             PilotControls.Apply(Player, move);
             bool attacking = PilotControls.AimAndAttack(Player, boss);
+            if(FargoArmorSkill.TryUse(Player,boss,combat.LastDecision.ForecastFirstHit==0))attacking=Player.controlUseItem;
             DetectBlockedAttack(attacking);
             long telemetryStart = System.Diagnostics.Stopwatch.GetTimestamp();
             session.Tick(Player, boss, combat, attacking);
@@ -154,9 +156,13 @@ namespace MutantPilot.Common
             // Recovery 2: re-pick the weapon slot (a stale selection is another silent refusal).
             PilotControls.SelectWeapon(Player);
         }
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        public override void OnHitNPCWithProj(Projectile proj,NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (target.type == FargoDash.MutantBossType) session?.Damage(damageDone);
+            if (target.type == FargoDash.MutantBossType) session?.Damage(damageDone,DamageOrigin.Snapshot(proj),hit.Crit);
+        }
+        public override void OnHitNPCWithItem(Item item,NPC target,NPC.HitInfo hit,int damageDone)
+        {
+            if(target.type==FargoDash.MutantBossType)session?.Damage(damageDone,new {kind="item",name=item.ModItem?.FullName??$"Terraria/{item.type}",item.prefix},hit.Crit);
         }
         public override void OnHurt(Player.HurtInfo info) => session?.Hurt(Player, info, combat);
         public override void Kill(double damage, int hitDirection, bool pvp, Terraria.DataStructures.PlayerDeathReason damageSource)

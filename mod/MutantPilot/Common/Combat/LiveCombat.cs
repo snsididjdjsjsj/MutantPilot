@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,6 +22,10 @@ namespace MutantPilot.Common
         readonly ForecastAudit tossBossAudit = new();
         readonly ForecastAudit ritualResponseAudit = new();
         bool coupledToss;
+        int legendaryHyper=-1;
+        Projectile activeDashProjectile;
+        readonly int[] bossAiUpdates=new int[CombatPlanner.ForecastTicks+1];
+        readonly int[] bossAiElapsed=new int[CombatPlanner.ForecastTicks+1];
         readonly EyeBurstForecast eyeBirths = new();
         readonly MechFanForecast fanBirths = new();
         readonly SwordResponseForecast swordResponse = new();
@@ -48,9 +52,11 @@ namespace MutantPilot.Common
         readonly VoidInnerRouting voidRouting = new();
         readonly VoidOuterRouting outerVoid = new();
         readonly P3VoidRouting p3VoidRouting = new();
+        readonly EocRouting eocRouting = new();
         readonly List<LinearMark> voidMarks = new(80);
         readonly List<GuideTrack> voidCurved = new(80);
         readonly NVector[] voidGoals = new NVector[CombatPlanner.ForecastTicks + 1];
+        readonly NVector[] tossGoals = new NVector[CombatPlanner.ForecastTicks + 1];
         readonly MotionModel motion = new();
         readonly ForecastAudit forecastAudit = new();
         readonly ForecastAudit eyeBirthAudit = new();
@@ -100,6 +106,10 @@ namespace MutantPilot.Common
         Move previous = new(0, 3);
         bool havePrevious;
         int side = 1, sideUntil;
+        int tossTravelHoldUntil;
+        // Latched axis/side for the state-41 wind-up lateral escape; see TossEarlyLateral.
+        float tossEarlyAngle;
+        int tossEarlySide = 1;
         // Default stance keeps circling the boss; see the goal assignment in Decide.
         float standAngle;
         int standSign = 1;
@@ -117,8 +127,15 @@ namespace MutantPilot.Common
         // 0, not int.MinValue: "tick - last" with int.MinValue overflows negative in unchecked
         // arithmetic and silently disables the trigger forever.
         int lastDashTriggerTick;
+        // Evidence of accessory-skill use: presses accepted, and what the dash was aimed at.
+        int dashFires;
+        Vector2 dashAim;
+        int dashFiredAtThreatTicks;
+        // Tick until which the dash direction stays the goal; see DashRunTicks in PilotTuning.
+        int dashRunUntil;
         Vector2[] arenaPath;
         Projectile giantRay;
+        readonly List<Projectile> giantRays = new(2);
         bool stateDependentThreats;
         int finalOrbitSide = -1;
         long lastGiantGeneration = -1;
@@ -141,11 +158,17 @@ namespace MutantPilot.Common
         public Decision LastDecision { get; private set; }
         public object NavigationReport => new { cost = planner.NavigationCost, firstHit = planner.NavigationFirstHit,
             futureIndexParallel = futureIndex.LastBuildParallel,
+            forecastWorkers=futureIndex.WorkerCount,
             reactiveProposals = planner.ReactiveProposals,
+            rescueFrontierPeak=planner.RescueFrontierPeak,
+            giantRayCount=giantRays.Count,
+            activeDash=activeDashProjectile==null?null:new {x=activeDashProjectile.Center.X,y=activeDashProjectile.Center.Y,
+                countdown=activeDashProjectile.localAI[0],fast=activeDashProjectile.ai[1]==-2},
             detourProposals = planner.DetourProposals,
             retainedForecastFirstHit = planner.RetainedForecastFirstHit,
             selectedRoute = LastDecision.RescueDepth>0 || LastDecision.ForecastFirstHit>0 ? planner.SelectedRoute : null,
             fixedBossKnown, fixedBossResponseAudit = fixedBossAudit.Snapshot(),
+            eocRoute=eocRouting.Center is NVector eocCenter?new {x=eocCenter.X,y=eocCenter.Y}:null,
             coupledSmallEyes, smallEyeForecastStates = coupledSmallEyes ? smallEyeResponse.Count : 0,
             smallEyeResponseAudit = smallEyeResponseAudit.Snapshot(),
             coupledDirectDash, directDashForecastStates = coupledDirectDash ? directDashResponse.Count : 0,
@@ -161,6 +184,10 @@ namespace MutantPilot.Common
             pendingMarks = markBirths.Events.Count, pendingEyes = eyeBirths.Events.Count, pendingFanRays = fanBirths.Paths.Count,
             nativeEquipment = FargoCapabilities.Snapshot(player),
             betsyDash = FargoActiveSkill.Snapshot(),
+            accessorySkills = new { allowed = PilotTuning.Current.AllowAccessorySkills,
+                trigger = PilotTuning.Current.TriggerBetsyDash, fires = dashFires,
+                aimX = dashAim.X, aimY = dashAim.Y, firedAtThreatTicks = dashFiredAtThreatTicks,
+                starts = FargoCapabilities.DashStarts, allowedGoldenStasis = PilotTuning.Current.AllowGoldenStasis },
             goldShell = FargoGoldShell.Snapshot(),
             dashImmunity = new { remaining = dashImmune, applied = PilotTuning.Current.UseDashImmunity },
             clearanceReserve, voidRoute = voidRouting.Snapshot(), outerVoidRoute = outerVoid.Snapshot(), p3VoidRoute=p3VoidRouting.Snapshot(), pendingLockedSpear = pendingLockedSpear is PendingSpear spear
@@ -229,6 +256,14 @@ namespace MutantPilot.Common
         {
             var totalWatch = Stopwatch.StartNew();
             player = local; boss = target;
+            if(boss.ai[0]==20&&lastAttack!=20)eocRouting.Reset();
+            legendaryHyper=PilotWorld.IsMasochist&&Main.getGoodWorld?PilotWorld.BossHyper(boss):-1;
+            int clockPhase=legendaryHyper;
+            for(int future=1;future<bossAiUpdates.Length;future++)
+            {
+                bossAiUpdates[future]=EncounterClock.Next(ref clockPhase);
+                bossAiElapsed[future]=bossAiElapsed[future-1]+bossAiUpdates[future];
+            }
             clearanceReserve = boss.ai[0] >= 0 && (boss.dontTakeDamage || ticksWithoutDamage < 180)
                 ? Math.Clamp(PilotTuning.Current.ThreatClearance, 0, 128) : 0;
             var actual = new MotionState(N(player.Center), N(player.velocity),
@@ -257,8 +292,15 @@ namespace MutantPilot.Common
             bool circle = PilotArena.TryCircle(out arenaCenter, out arenaRadius, out Projectile ritual);
             arenaPath = ritual == null ? null : forecasts.GetValueOrDefault(ritual.whoAmI);
             if (!circle) { arenaCenter = boss.Center; arenaRadius = 1800; }
-            if (coupledDirectDash) directDashResponse.Reset(new(N(boss.Center),N(boss.velocity),(int)boss.ai[0],
-                boss.ai[1],boss.ai[2],boss.localAI[1],Delay:boss.ai[3],Aim:boss.localAI[0],Arena:circle?N(arenaCenter):null));
+            if (coupledDirectDash)
+            {
+                DirectCharge? observedCharge=legendaryHyper>=0&&activeDashProjectile!=null&&boss.ai[0] is 6 or 15 or 23
+                    ?DirectDashResponseForecast.ObservedCharge(N(activeDashProjectile.Center),N(boss.velocity),activeDashProjectile.localAI[0],
+                        (int)boss.ai[0],boss.ai[1],legendaryHyper,activeDashProjectile.ai[1]==-2):null;
+                directDashResponse.Reset(new(N(boss.Center),N(boss.velocity),(int)boss.ai[0],
+                    boss.ai[1],boss.ai[2],boss.localAI[1],Delay:boss.ai[3],Aim:boss.localAI[0],Arena:circle?N(arenaCenter):null,
+                    PrepareSpan:(boss.height+player.height)/2f),legendaryHyper,observedCharge);
+            }
             float range = PilotControls.AttackRange(player.HeldItem, player, boss);
             // The old 650px estimate and no-damage timeout pulled Zenith into
             // close attacks. Use the installed weapon's normal aiming bounds.
@@ -309,18 +351,20 @@ namespace MutantPilot.Common
                 float hold = Math.Max(desired, Math.Clamp(tuning.MinDashRange, 300f, 1200f));
                 if (away.LengthSquared() > 1f) goal = boss.Center + Vector2.Normalize(away) * hold;
             }
-            coupledToss = PilotWorld.IsMasochist && (attack == 25 || attack == 41 && boss.ai[1] > 0
+            coupledToss = PilotWorld.IsMasochist && (Main.getGoodWorld&&attack==0&&boss.localAI[3]>0&&boss.ai[3]>0 || attack == 25 || attack == 41 && boss.ai[1] > 0
                 && boss.localAI[1] > 0 && Math.Abs(boss.localAI[2]) == 1);
             if (coupledToss)
             {
                 Projectile aim = null; int count = 0;
                 foreach (var threat in threats)
                     if (threat.Projectile.ModProjectile?.Name == "MutantSpearAim" && threat.Projectile.ai[0] == boss.whoAmI
-                        && (attack==25 ? threat.Projectile.ai[1]==2 : threat.Projectile.ai[1]<=1)) { aim = threat.Projectile; count++; }
+                        && (attack==0?threat.Projectile.ai[1]==3:attack==25 ? threat.Projectile.ai[1]==2 : threat.Projectile.ai[1]<=1)) { aim = threat.Projectile; count++; }
                 if (count != 1) aim = null;
                 tossResponse.Reset(new(N(boss.Center), N(boss.velocity), boss.ai[1], boss.ai[3], boss.ai[2], false,
-                        AimAngle: aim != null && aim.localAI[0] != 0 ? aim.rotation : float.NaN,Arena:circle?N(arenaCenter):null),
-                    boss.localAI[0], boss.localAI[2], boss.localAI[1], aim?.whoAmI ?? -1, aim?.timeLeft ?? 0, attack==25);
+                        AimAngle: aim != null && aim.localAI[0] != 0 ? aim.rotation : float.NaN,Arena:circle?N(arenaCenter):null,
+                        LockedAim:boss.localAI[0]),
+                    boss.localAI[0], boss.localAI[2], attack==0?boss.ai[3]:boss.localAI[1], aim?.whoAmI ?? -1, aim?.timeLeft ?? 0, attack==25,
+                    legendaryHyper,firstPhase:attack==0);
             }
             wormTossReferences.Clear(); wormTossReferences.Add(0);
             wormSwordReferences.Clear(); wormSwordReferences.Add(0);
@@ -338,7 +382,7 @@ namespace MutantPilot.Common
                         swordParts.Add(new(p.whoAmI,p.ai[1],p.localAI[0]==0 ? (p.Center-boss.Center).ToRotation() : p.localAI[1],p.timeLeft));
                     }
                 swordResponse.Reset(new(N(boss.Center),N(boss.velocity),boss.ai[1],boss.ai[3],
-                    boss.ai[0]==45 || boss.ai[0]==9 && boss.localAI[2]==1,Arena:circle?N(arenaCenter):null),boss.ai[2],swordParts);
+                    boss.ai[0]==45 || boss.ai[0]==9 && boss.localAI[2]==1,Arena:circle?N(arenaCenter):null),boss.ai[2],swordParts,legendaryHyper);
             }
             worldRouting.Observe(N(player.Center), motion.WorldMinimum,
                 new(motion.WorldMaximum.X, (float)Main.worldSurface * 16 - 200),
@@ -366,9 +410,9 @@ namespace MutantPilot.Common
             }
             // State 21 ends in a six-update wind-up. Build lateral speed while
             // its aim still follows us, including at a height-band edge.
-            if (tuning.RouteSpears && attack is 4 or 5 or 6 or 21 or 22)
+            if (tuning.RouteSpears && attack is 4 or 5 or 6 or 13 or 21 or 22)
             {
-                if(lastAttack is not (4 or 5 or 6 or 21 or 22 or 23))
+                if(lastAttack is not (4 or 5 or 6 or 13 or 21 or 22 or 23))
                 {
                     NVector tangent=SpearOrbitRouting.Tangent(N(player.Center),N(boss.Center),1);
                     float forward=NVector.Dot(tangent,N(player.velocity));
@@ -389,8 +433,39 @@ namespace MutantPilot.Common
                 if(player.Center.X<motion.WorldMinimum.X+6000)tossTravelSide=1;
                 if(player.Center.X>motion.WorldMaximum.X-6000)tossTravelSide=-1;
                 float travel=Math.Clamp(tuning.KiteOffset,200,1200);
-                goal=player.Center+new Vector2(tossTravelSide*travel,kiteDirection*travel*.3f);
+                goal=player.Center+new Vector2(tossTravelSide*travel,kiteDirection*travel*(tuning.ContinuousTossTravel?1f:.3f));
+                if(tuning.SpiralTossTravel && Math.Abs(boss.localAI[2])==1)
+                    goal=X(TossRouting.Goal(N(player.Center),N(boss.Center),boss.localAI[2],travel));
             }
+            if(tuning.LegendaryWormTravel && Main.getGoodWorld && attack is 0 or 24 or 25)
+            {
+                if(lastAttack is not (0 or 24 or 25))
+                    tossTravelSide=Math.Abs(player.velocity.X)>4?Math.Sign(player.velocity.X)
+                        :player.Center.X<(motion.WorldMinimum.X+motion.WorldMaximum.X)/2?1:-1;
+                if(player.Center.X<motion.WorldMinimum.X+6000)tossTravelSide=1;
+                if(player.Center.X>motion.WorldMaximum.X-6000)tossTravelSide=-1;
+                // Spread pursuing chains along a moving path from their telegraph
+                // onward. Every candidate still checks all native worm collisions.
+                float travel=Math.Clamp(tuning.KiteOffset,400,1200);
+                goal=player.Center+new Vector2(tossTravelSide*travel,kiteDirection*travel*.6f);
+            }
+            // State 41 locks its throw aim at ai[1] 151 and then drags two 156-tick MutantDeathray2
+            // rays along that axis while small bombs fall on the trail; the 2026-10-20 hit records
+            // cluster exactly there. A lateral 600px displacement taken during the wind-up makes the
+            // throw and both rays miss, which is the only cheap answer to a pattern this wide.
+            if (tuning.RouteSpears && tuning.TossEarlyLateral && attack == 41 && boss.ai[1] < tuning.TossEarlyTicks)
+            {
+                if (lastAttack != 41)
+                {
+                    Vector2 fromBoss = player.Center - boss.Center;
+                    tossEarlyAngle = fromBoss.LengthSquared() > 1f ? fromBoss.ToRotation() : 0f;
+                    Vector2 normal = new(-MathF.Sin(tossEarlyAngle), MathF.Cos(tossEarlyAngle));
+                    // Keep the side the player is already on: crossing the axis re-enters the throw.
+                    tossEarlySide = Vector2.Dot(fromBoss, normal) < 0 ? -1 : 1;
+                }
+                goal = X(ProjectileKinematics.LockedSpearGoal(N(player.Center), N(boss.Center), tossEarlyAngle, tossEarlySide));
+            }
+            if(Main.getGoodWorld&&attack is 25 or 41)tossTravelHoldUntil=tick+156;
             if (tuning.OrbitSpheres && attack is 1 or 40)
             {
                 if (lastAttack != attack) orbitAngle = (player.Center - boss.Center).ToRotation();
@@ -413,11 +488,15 @@ namespace MutantPilot.Common
             }
             if (tuning.HoldAttackPause && attack == 52 && Vector2.Distance(player.Center, boss.Center) <= range * .9f
                 && ticksWithoutDamage < 120) goal = player.Center;
-            // The eye has expired by timer 216; its delayed scythe1 fan then
-            // converges around the locked center. Approach that central opening
-            // before the fan accelerates; all scythe2 and residual hazards remain
-            // in the ordinary collision checks and can override this attractor.
-            if(attack==20 && boss.ai[1]>=240)goal=new(boss.ai[2],boss.ai[3]);
+            if(tuning.LegendaryWormTravel&&Main.getGoodWorld&&tick<tossTravelHoldUntil&&attack is 52 or 31)
+            {
+                float travel=Math.Clamp(tuning.KiteOffset,400,1200);
+                goal=player.Center+new Vector2(tossTravelSide*travel,kiteDirection*travel*.6f);
+            }
+            // Stay near the eye's actual lock from its age 120 onward. In FTW,
+            // the NPC locks earlier at a different position. Radial Scythe2 and
+            // all other hazards still override this preferred central opening.
+            if(attack==20&&eocRouting.Center is NVector eyeCenter)goal=X(eyeCenter);
             if (attack == 33) goal = X(ProjectileKinematics.NukePreparation(N(player.Center), motion.WorldMinimum.Y));
             if (attack == 34) goal = boss.Center - new Vector2(0, 100);
             if(coupledSword)
@@ -492,6 +571,47 @@ namespace MutantPilot.Common
                 goal = X(FinalSparkForecast.OrbitGoal(N(player.Center), N(boss.Center), finalOrbitSide,
                     Math.Clamp(tuning.FinalSparkRadius, 100, 500)));
             }
+            // A live MutantDeathray2 is a 3000px line, so distance from its origin says nothing: what
+            // matters is the perpendicular offset from its bearing, and that offset has to keep
+            // growing. The 2026-10-20 kill logs show the ray sweeping into a player who was flying
+            // along the beam instead of across it. Step perpendicular to the nearest armed ray.
+            float rayGap = float.MaxValue;
+            Vector2 rayNormal = Vector2.Zero;
+            float rayStep = tuning.RaySidestep;
+            // Residual rays remain in the collision search. Their nearest normal
+            // must not replace a wind-up's strategic route: in native 119 it pulled
+            // away from the sword's back until a collision was only 19 ticks away.
+            bool dedicatedRoute=coupledSword||attack==20&&eocRouting.Center.HasValue
+                ||tuning.ContinuousTossTravel&&attack==41;
+            if (rayStep > 0f && !dedicatedRoute)
+            {
+                foreach (Threat threat in threats)
+                {
+                    if (threat.ShortRayKind != 2 || threat.RemainingTicks <= 0 || threat.Projectile.scale < .3f) continue;
+                    Vector2 direction = threat.Projectile.velocity;
+                    if (direction.LengthSquared() < .001f) continue;
+                    direction = Vector2.Normalize(direction);
+                    Vector2 toPlayer = player.Center - threat.Projectile.Center;
+                    if (Vector2.Dot(toPlayer, direction) < -200f) continue;
+                    Vector2 normal = new(-direction.Y, direction.X);
+                    float lateral = Vector2.Dot(toPlayer, normal);
+                    // Armed rays (scale >= .7 can damage) keep the tighter threshold; a ray that is
+                    // still arming is worth leaving early, which is the only way to be clear in time.
+                    float limit = threat.Projectile.scale >= .7f ? Math.Min(rayStep, 340f) : 340f;
+                    if (Math.Abs(lateral) > limit) continue;
+                    if (Math.Abs(lateral) < rayGap)
+                    {
+                        rayGap = Math.Abs(lateral);
+                        rayNormal = lateral >= 0 ? normal : -normal;
+                    }
+                }
+            }
+            if (rayNormal != Vector2.Zero) goal = player.Center + rayNormal * rayStep;
+            // A dash press already committed 15 ticks of immunity and ~375px of displacement along one
+            // bearing. Finish that escape instead of re-centring on the stance target the moment the
+            // immunity ends: measured on the 2026-10-20 trials, 8 of 20 hits landed 1-10 ticks after
+            // the immunity expired. The hazard search stays authoritative and can still deviate.
+            if (tick < dashRunUntil) goal = player.Center + dashAim * Math.Max(200f, tuning.DashRunDistance);
             lastAttack = attack;
             Vector2 offset = goal - arenaCenter;
             if (offset.Length() > arenaRadius - 200)
@@ -509,49 +629,64 @@ namespace MutantPilot.Common
             float reach = tuning.GoalReachTicks * Math.Max(tuning.GoalReachFloorSpeed, player.velocity.Length());
             if (pull.LengthSquared() > reach * reach) goal = player.Center + Vector2.Normalize(pull) * reach;
             var frame = new PlanFrame(actual, N(goal), N(boss.Center), range, !boss.dontTakeDamage);
-            double budget = Math.Clamp(tuning.BudgetMs, 1, 8), rescueBudget = Math.Clamp(tuning.RescueBudgetMs, 0, 96);
+            double budget = Math.Clamp(tuning.BudgetMs, 1, 16), rescueBudget = Math.Clamp(tuning.RescueBudgetMs, 0, 256);
             if (giantRay != null)
             {
                 budget = Math.Max(budget, Math.Clamp(tuning.FinalBeamBudgetMs, 1, 8));
-                rescueBudget = Math.Max(rescueBudget, Math.Clamp(tuning.FinalBeamRescueBudgetMs, 0, 96));
+                rescueBudget = Math.Max(rescueBudget, Math.Clamp(tuning.FinalBeamRescueBudgetMs, 0, 256));
             }
             EffectiveBudgetMs = budget; EffectiveRescueBudgetMs = rescueBudget;
             planner.GoalPullDivisor = tuning.GoalPullDivisor;
             planner.ProposalBudget = tuning.ProposalBudget;
+            planner.RescueBeamWidth=tuning.RescueBeamWidth;
+            planner.RescueSegmentTicks=tuning.RescueSegmentTicks;
+            planner.DiverseRescue=tuning.DiverseRescue&&Main.getGoodWorld;
+            NVector[] routeGoals=trackingVoid||trackingEyeOrbit?voidGoals:null;
+            if(routeGoals==null&&coupledToss&&attack==41&&tuning.SpiralTossTravel)
+            {
+                TossRouting.Track(tossGoals,actual,motion,tossResponse.At(0),boss.localAI[0],
+                    boss.localAI[2],boss.localAI[1],legendaryHyper);
+                routeGoals=tossGoals;
+                goal=X(tossGoals[0]);
+                frame=frame with {Goal=tossGoals[0]};
+            }
             LastDecision = coupledWorms
                 ? planner.ChooseCoupled(frame, motion, 0, AdvanceWormResponse, DangerWormResponse, previous, budget, rescueBudget,
-                    trackingVoid || trackingEyeOrbit ? voidGoals : null)
+                    routeGoals)
                 : coupledDirectDash
                 ? planner.ChooseCoupled(frame, motion, 0, directDashResponse.Advance, DangerDirectDash, previous, budget, rescueBudget)
                 : coupledSmallEyes
                 ? planner.ChooseCoupled(frame, motion, 0, AdvanceSmallEyesResponse, DangerSmallEyesResponse, previous, budget, rescueBudget,
-                    trackingVoid || trackingEyeOrbit ? voidGoals : null)
+                    routeGoals)
                 : trackingVoid || trackingEyeOrbit
                 ? planner.ChooseTracking(frame, motion, DangerState, voidGoals, previous, budget, rescueBudget)
                 : coupledToss
-                ? planner.ChooseCoupled(frame, motion, 0, tossResponse.Advance, DangerToss, previous, budget, rescueBudget)
+                ? planner.ChooseCoupled(frame, motion, 0, tossResponse.Advance, DangerToss, previous, budget, rescueBudget,routeGoals)
                 : coupledSword
                 ? planner.ChooseCoupled(frame, motion, 0, swordResponse.Advance, DangerSword, previous, budget, rescueBudget)
                 : giantRay != null
                 ? planner.ChooseCoupled(frame, motion, boss.ai[3], AdvanceRay, Danger, previous, budget, rescueBudget)
                 : stateDependentThreats ? planner.ChooseWithState(frame, motion, DangerState, previous, budget, rescueBudget)
                 : planner.Choose(frame, motion, DangerPosition, previous, budget, rescueBudget);
-            // The Betsy dash is an active skill: nothing presses its key unless the controller does.
+            // Accessory skills are permitted by the operator, except Golden Stasis. The Betsy dash is
+            // the one that changes survivability: 15 ticks of FargoSoulsPlayer.ImmuneToDamage while
+            // travelling 25px/tick toward the cursor, on a 300 tick native cooldown. Nothing presses
+            // its key unless the controller does, so every use is deliberate and counted.
             // DashTriggerFirstHit > 0 waits until the chosen line is already doomed inside that many
-            // ticks. Measured against a 300 tick native cooldown that fires only ~2 times in a 455s
-            // fight, i.e. 0.17% of ticks are immune, which cannot matter. 0 therefore means
-            // "preemptive": dash whenever the cooldown is free and anything is predicted in the
-            // horizon, which is the only policy that can use the whole 15-tick window budget.
+            // ticks. 0 therefore means "preemptive": dash whenever the cooldown is free and anything
+            // is predicted in the horizon.
             int threatTicks = tuning.DashTriggerFirstHit <= 0
                 ? LastDecision.ForecastFirstHit : LastDecision.FirstHit;
-            bool wantDash = tuning.AllowImmunityCrutches && tuning.TriggerBetsyDash && threatTicks != 0
+            bool wantDash = TrialLoadout.DashesAllowed && tuning.AllowAccessorySkills && tuning.TriggerBetsyDash && threatTicks != 0
                 && (tuning.DashTriggerFirstHit <= 0 || threatTicks <= tuning.DashTriggerFirstHit);
             if (wantDash && tick >= lastDashTriggerTick + Math.Max(1, tuning.DashTriggerCooldown))
             {
                 // SpecialDashKey throws the dash along SafeDirectionTo(player, Main.MouseWorld), so
-                // the cursor has to be aimed first. Use the direction the planner already wants.
-                Vector2 away = X(LastDecision.Next.Position) - player.Center;
-                if (away.LengthSquared() < 1f) away = player.Center - boss.Center;
+                // the cursor has to be aimed first, and the press cannot be recalled. Aim at the
+                // bearing with the most room at the end of the dash rather than merely away from the
+                // boss: the immunity lasts 15 ticks, so the player has to finish outside whatever is
+                // still arriving when it expires.
+                Vector2 away = DashEscapeDirection();
                 if (away.LengthSquared() > 1f)
                 {
                     Vector2 screenCenter = new(Main.screenWidth / 2f, Main.screenHeight / 2f);
@@ -560,7 +695,14 @@ namespace MutantPilot.Common
                     Main.mouseX = (int)Math.Clamp(aim.X, 0, Main.screenWidth - 1);
                     Main.mouseY = (int)Math.Clamp(aim.Y, 0, Main.screenHeight - 1);
                 }
-                if (FargoActiveSkill.Trigger(player)) lastDashTriggerTick = tick;
+                if (FargoActiveSkill.Trigger(player))
+                {
+                    lastDashTriggerTick = tick;
+                    dashFires++;
+                    dashAim = away;
+                    dashFiredAtThreatTicks = threatTicks;
+                    dashRunUntil = tick + Math.Clamp(tuning.DashRunTicks, 0, 60);
+                }
             }
             // Golden Stasis. Unlike the dash this costs nothing in control, because the shell zeroes
             // every movement key anyway: it is 300 ticks of guaranteed immunity. So it is reserved for
@@ -684,7 +826,7 @@ namespace MutantPilot.Common
             });
             threats.Clear(); explosions.Clear(); futureOrbs.Clear(); futureBeams.Clear(); futureMarkRays.Clear(); futureBoxes.Clear(); futureShards.Clear();
             futureEyeRays.Clear(); warningPillars.Clear();
-            boxSources.Clear(); beamSources.Clear(); leafParents.Clear(); trueEyeParents.Clear(); giantRay = null;
+            boxSources.Clear(); beamSources.Clear(); leafParents.Clear(); trueEyeParents.Clear(); giantRay = null;giantRays.Clear();activeDashProjectile=null;
             stateDependentThreats = false;
             Array.Clear(bombOwners);
             wormParts.Clear(); wormNodes.Clear(); wormIdentities.Clear();
@@ -723,6 +865,8 @@ namespace MutantPilot.Common
                         N(target.Center), N(target.velocity));
                     trueEyeParents[(p.owner, p.identity)] = (p, path);
                 }
+                if(boss.ai[0]==20&&p.ModProjectile?.Name=="MutantEyeOfCthulhu"&&p.ai[0]==player.whoAmI)
+                    eocRouting.Observe(p.ai[1],new(p.localAI[0],p.localAI[1]));
                 if (p.ModProjectile?.Name is "MutantDestroyerHead" or "MutantDestroyerBody" or "MutantDestroyerTail")
                 {
                     wormParts.Add(p); wormIdentities[(p.owner, p.identity)] = p;
@@ -737,7 +881,7 @@ namespace MutantPilot.Common
                     leafParents[(p.owner, p.identity)] = (p, parent);
                 }
             }
-            coupledDirectDash=PilotWorld.IsMasochist && (boss.ai[0] is 14 or 15 or 21 or 22 or 23
+            coupledDirectDash=PilotWorld.IsMasochist && (Main.getGoodWorld&&boss.ai[0]==4 || boss.ai[0] is 13 or 14 or 15 or 21 or 22 or 23
                 ||boss.ai[0] is 5 or 6 && boss.ai[3]>0) && smallEyes.Count==0 && giantRay==null;
             wormParts.Sort((a, b) => a.whoAmI.CompareTo(b.whoAmI));
             foreach (Projectile p in wormParts)
@@ -753,12 +897,13 @@ namespace MutantPilot.Common
             {
                 if (!p.hostile || p.damage <= 0) continue;
                 string name = p.ModProjectile?.Name ?? "";
+                if(name=="MutantSpearDash"&&p.ai[0]==boss.whoAmI)activeDashProjectile=p;
                 // A dropping pillar is still alpha-fading, so CanDamage rejects it below
                 // and it never enters threats. Keep it for the timeline layer instead.
                 if (name == "MutantPillar" && p.alpha > 0) warningPillars.Add(p);
                 if (name == "MutantGiantDeathray2")
                 {
-                    giantRay = p; beamSources[p.whoAmI] = p.type;
+                    giantRay = p; giantRays.Add(p); beamSources[p.whoAmI] = p.type;
                     continue;
                 }
                 if (name is "MoonLordMoonBlast" or "MoonLordSunBlast")
@@ -900,7 +1045,7 @@ namespace MutantPilot.Common
             foreach (Projectile pillar in warningPillars)
                 timeline.EmitPillarDash(futureBeams, CombatPlanner.ForecastTicks, N(pillar.Center),
                     pillar.alpha, N(player.Center), pillar.whoAmI, ProjectileBirth.Of(pillar));
-            pendingLockedSpear = boss.localAI[3] > 0
+            pendingLockedSpear = boss.localAI[3] > 0 && !(Main.getGoodWorld&&boss.ai[0]==0)
                 ? LockedTossForecast.Read((int)boss.ai[0], boss.ai[1], boss.ai[2], boss.ai[3],
                     boss.localAI[0], N(boss.Center), N(boss.velocity)) : null;
             if (pendingLockedSpear is PendingSpear pendingToss && PilotWorld.IsMasochist)
@@ -912,12 +1057,12 @@ namespace MutantPilot.Common
                 futureBeams.Add(new(pendingToss.Origin, -axis, pendingToss.Born + 23, pendingToss.Born + 155, 30 + pendingToss.Padding));
             }
             sphereBirths.Update((int)boss.ai[0], boss.ai[1], boss.ai[2], boss.ai[3], boss.localAI[1],
-                boss.spriteDirection, N(boss.Center), PilotWorld.IsMasochist, boss.life <= 1);
+                boss.spriteDirection, N(boss.Center), PilotWorld.IsMasochist, boss.life <= 1,legendaryHyper:legendaryHyper);
             markBirths.Update((int)boss.ai[0], boss.ai[1], boss.ai[2], boss.ai[3], boss.localAI[0],
-                N(boss.Center), PilotWorld.IsMasochist);
+                N(boss.Center), PilotWorld.IsMasochist,legendaryHyper);
             eyeBirths.Update((int)boss.ai[0], boss.ai[1], boss.ai[2], boss.ai[3], boss.localAI[2],
-                boss.localAI[0], N(boss.Center), PilotWorld.IsMasochist);
-            fanBirths.Update((int)boss.ai[0], boss.ai[1], boss.ai[2], boss.ai[3], N(boss.Center), PilotWorld.IsMasochist);
+                boss.localAI[0], N(boss.Center), PilotWorld.IsMasochist,legendaryHyper);
+            fanBirths.Update((int)boss.ai[0], boss.ai[1], boss.ai[2], boss.ai[3], N(boss.Center), PilotWorld.IsMasochist,legendaryHyper);
             if (boss.ai[0] == 8)
             {
                 voidRayCenter = boss.Center; voidLastTick = (long)Main.GameUpdateCount;
@@ -969,6 +1114,7 @@ namespace MutantPilot.Common
             futureIndex.Clear(queryHalf, clearanceReserve);
             forecastExplosions.Clear();
             foreach (var blast in explosions) forecastExplosions.Add((N(blast.Center), blast.At));
+            futureIndex.WorkerCount=PilotTuning.Current.ForecastWorkers;
             futureIndex.Build(futureBoxes, futureShards, futureOrbs, forecastExplosions);
             if (tracks.Count > Main.maxProjectiles * 2) tracks.Clear();
         }
@@ -980,6 +1126,7 @@ namespace MutantPilot.Common
             for (int index = 0; index < threats.Count; index++)
             {
                 Threat threat = threats[index]; Projectile p = threat.Projectile;
+                if(p.ModProjectile?.Name=="MutantSpearSpin"&&p.ai[0]==boss.whoAmI){globalThreats.Add(index);continue;}
                 if (coupledWorms && wormResponse.Contains(p.whoAmI)) { globalThreats.Add(index); continue; }
                 bool lance = p.type == ProjectileID.FairyQueenLance;
                 if (threat.LongShape && !lance) { globalThreats.Add(index); continue; }
@@ -1065,7 +1212,8 @@ namespace MutantPilot.Common
             if (name == "MutantNuke")
             {
                 NVector[] path = GetParentBuffer(p.whoAmI);
-                ProjectileKinematics.Ballistic(path, N(p.Center), N(p.velocity), p.ai[0]);
+                ProjectileKinematics.Ballistic(path, N(p.Center), N(p.velocity), p.ai[0],
+                    legendaryHyper>=0?(int)p.localAI[2]:-1);
                 for (int t = 1; t < result.Length; t++) result[t] = X(path[t]);
                 return result;
             }
@@ -1175,9 +1323,14 @@ namespace MutantPilot.Common
             return buffer;
         }
 
-        float AdvanceRay(float angle, MotionState state, int tick) => boss.ai[0] == -5
-            ? FinalSparkForecast.Chase(angle, N(boss.Center + boss.velocity * tick), state.Position,
-                PilotWorld.IsMasochist && boss.ai[2] + tick >= 420) : angle;
+        float AdvanceRay(float angle, MotionState state, int tick)
+        {
+            if(boss.ai[0]!=-5)return angle;
+            for(int update=0;update<bossAiUpdates[tick];update++)
+                angle=FinalSparkForecast.Chase(angle,N(boss.Center+boss.velocity*tick),state.Position,
+                    PilotWorld.IsMasochist&&boss.ai[2]+bossAiElapsed[tick-1]+update+1>=420);
+            return angle;
+        }
         float TossReference(float reference) => coupledWorms ? wormTossReferences[(int)reference]
             : coupledSmallEyes ? eyeTossReferences[(int)reference] : reference;
         float SwordReference(float reference) => coupledWorms ? wormSwordReferences[(int)reference]
@@ -1261,6 +1414,14 @@ namespace MutantPilot.Common
             if(queriedSword>=0)return swordResponse.At(queriedSword).Arena;
             return tossView?.Arena;
         }
+        Vector2 ResponseBoss(int tick,TossWorld? tossView)
+        {
+            if(queriedDirectDash>=0)return X(directDashResponse.At(queriedDirectDash).Position);
+            if(queriedSword>=0)return X(swordResponse.At(queriedSword).Position);
+            if(tossView is TossWorld toss)return X(toss.Position);
+            if(tick<=fixedBossKnown)return X(fixedBossPath[tick]);
+            return boss.Center+boss.velocity*Math.Min(tick,10);
+        }
         float DangerCore(MotionState state, int tick, float rayAngle, TossWorld? tossView)
         {
             NVector future = state.Position;
@@ -1269,6 +1430,13 @@ namespace MutantPilot.Common
             if(queriedSword>=0 && swordResponse.Touches(queriedSword,future,projectileHalf+new NVector(inflation),tick))cost+=1000000;
             cost += worldRouting.BoundaryCost(future);
             int routingAttack = (int)boss.ai[0];
+            if(PilotTuning.Current.ReserveSpearTransition && routingAttack==1)
+            {
+                // Okuu can finish at state 4 with no wind-up tick in between. This is
+                // a bounded spacing preference, not an invented damaging hitbox.
+                float intrusion=Math.Max(0,220-Vector2.Distance(point,boss.Center));
+                cost+=Math.Min(50000,intrusion*intrusion*2);
+            }
             if (routingAttack >= 0 && routingAttack != 33 && routingAttack != 34)
                 cost += worldRouting.HeightCost(future);
             if (routingAttack is 3 or 32)
@@ -1327,16 +1495,22 @@ namespace MutantPilot.Common
             }
             if (pendingLockedSpear is PendingSpear pending && pending.Touches(future, new(halfX, halfY), tick)) cost += 1000000;
             if (giantRay != null && float.IsFinite(rayAngle))
+            foreach (Projectile activeRay in giantRays)
             {
                 int duration=boss.ai[0]==-7?255:0;
-                float scale = FinalSparkForecast.Scale(giantRay.localAI[0] + tick, PilotWorld.IsMasochist,duration);
+                float age=activeRay.localAI[0]+tick,previousAge=age-1;
+                if(Main.getGoodWorld&&boss.ai[0]==-5&&boss.life>1)
+                {
+                    age=Math.Min(age,771);previousAge=Math.Min(previousAge,771);
+                }
+                float scale = FinalSparkForecast.Scale(age, PilotWorld.IsMasochist,duration);
                 if (scale >= 5)
                 {
                     NVector direction = new(MathF.Cos(rayAngle), MathF.Sin(rayAngle));
-                    float previousScale = tick == 1 ? giantRay.scale
-                        : FinalSparkForecast.Scale(giantRay.localAI[0] + tick - 1, PilotWorld.IsMasochist,duration);
+                    float previousScale = tick == 1 ? activeRay.scale
+                        : FinalSparkForecast.Scale(previousAge, PilotWorld.IsMasochist,duration);
                     NVector origin = N(boss.Center + boss.velocity * tick) + direction * ((boss.ai[0]==-7?100:175) * previousScale / 10 + 1);
-                    float length = 3000 + (giantRay.localAI[1] - 3000) * MathF.Pow(.5f, tick);
+                    float length = 3000 + (activeRay.localAI[1] - 3000) * MathF.Pow(.5f, tick);
                     // Native lineWidth is full width with flat endpoints. Its
                     // separate 48px projectile box still damages at the origin.
                     // Six pixels per axis cover the real 5px origin jitter and rounding.
@@ -1421,6 +1595,50 @@ namespace MutantPilot.Common
             }
         }
 
+        // SpecialDashKey throws the dash along SafeDirectionTo(player, Main.MouseWorld): the aim decides
+        // everything and the press cannot be recalled. The 2026-10-20 Legendary trial proved that
+        // scoring bearings by distance to threat centres is useless against a 3000px rotating ray - it
+        // aimed straight back into the beam and the hit landed 17 ticks after the immunity expired.
+        // Score candidate landing points with the same hazard model that drives control: the dash puts
+        // the player 15 x 25px away, and immunity covers exactly those 15 ticks, so what matters is how
+        // dangerous that landing point is on the tick immunity ends and shortly after.
+        static readonly int[] dashProbeTicks = { 16, 24, 32 };
+        Vector2 DashEscapeDirection()
+        {
+            Vector2 origin = player.Center;
+            Vector2 planned = X(planner.NavigationEnd) - origin;
+            Vector2 best = Vector2.Zero;
+            float bestScore = float.MaxValue;
+            if (planned.LengthSquared() > 900f)
+            {
+                best = Vector2.Normalize(planned);
+                bestScore = DashLandingScore(origin + best * 375f);
+            }
+            for (int i = 0; i < 8; i++)
+            {
+                Vector2 direction = (i * MathHelper.TwoPi / 8f).ToRotationVector2();
+                Vector2 landing = origin + direction * 375f;
+                if (landing.X < motion.WorldMinimum.X + 140f || landing.X > motion.WorldMaximum.X - 140f
+                    || landing.Y < motion.WorldMinimum.Y + 140f || landing.Y > motion.WorldMaximum.Y - 140f) continue;
+                float score = DashLandingScore(landing);
+                if (score < bestScore) { bestScore = score; best = direction; }
+            }
+            if (best != Vector2.Zero) return best;
+            Vector2 next = X(LastDecision.Next.Position) - origin;
+            if (next.LengthSquared() > 100f) return Vector2.Normalize(next);
+            Vector2 away = origin - boss.Center;
+            return away.LengthSquared() > 1f ? Vector2.Normalize(away) : new Vector2(1f, 0f);
+        }
+        // Read-only use of the live hazard model at a hypothetical point. Costs a handful of native
+        // collision queries on the frames a dash is pressed, never on ordinary frames.
+        float DashLandingScore(Vector2 landing)
+        {
+            NVector point = N(landing);
+            float score = 0;
+            foreach (int tick in dashProbeTicks) score += Math.Min(DangerPosition(point, tick), 1000000f);
+            return score;
+        }
+
         // Worm head proximity. The soft term alone was worth ~9 cost at 31px against a 1000000 hit, so
         // the planner let the Destroyer head close to 31px and then the space was saturated by its body,
         // 66 predicted spear-trail orbs and 10 explosions: every candidate was doomed for 9 ticks.
@@ -1434,6 +1652,19 @@ namespace MutantPilot.Common
             return clearance * clearance / 4000;
         }
 
+        static bool BladeContact(string name) => name is "MutantSpearAim" or "MutantSpearDash"
+            or "MutantSpearSpin" or "MutantSpearThrown" or "MutantSword";
+        // Bounded: at zero gap it is worth 30000, far below a hit's 1000000, so a genuinely closed
+        // corridor can still be crossed, but ordinary routes keep their distance from blades.
+        static float BladeContactCost(Vector2 point, Vector2 center, int halfX, int halfY, float reserve)
+        {
+            float dx = Math.Max(0, Math.Abs(point.X - center.X) - halfX);
+            float dy = Math.Max(0, Math.Abs(point.Y - center.Y) - halfY);
+            float gap = MathF.Sqrt(dx * dx + dy * dy);
+            if (gap >= reserve) return 0;
+            float intrusion = 1 - gap / reserve;
+            return 30000 * intrusion * intrusion;
+        }
         float ProjectileRisk(MotionState state, int tick, bool fullScan, TossWorld? tossView)
         {
             NVector future = state.Position;
@@ -1469,6 +1700,8 @@ namespace MutantPilot.Common
                 }
                 bool followsToss = tossView is TossWorld && p.whoAmI == tossResponse.AimSlot
                     && tick <= tossResponse.AimRemaining && float.IsFinite(tossView.Value.AimAngle);
+                bool followsSpin=p.ModProjectile?.Name=="MutantSpearSpin"&&p.ai[0]==boss.whoAmI;
+                Vector2 spinCenter=followsSpin?ResponseBoss(tick,tossView):Vector2.Zero;
                 if (threat.Sword)
                 {
                     Vector2 a = threat.Centers[tick], b = threat.Centers[tick - 1], mid = (a + b) * .5f;
@@ -1486,8 +1719,13 @@ namespace MutantPilot.Common
                 if (!threat.LongShape && clearanceReserve > 0)
                     cost += threat.SmallBomb
                         ? ThreatClearance.Circle(future, N(threat.Centers[tick]), new(halfX, halfY), p.width / 2f, clearanceReserve)
-                        : ThreatClearance.Box(future, N(threat.Centers[tick]),
+                        : ThreatClearance.Box(future, N(followsSpin?spinCenter:threat.Centers[tick]),
                             new(p.width / 2f + halfX, p.height / 2f + halfY), clearanceReserve);
+                // Touching a blade is already a failure even when its own hit deals 0: its
+                // OnHitPlayer drops a MutantBombSmall on the player, which is what actually hurts.
+                if (!threat.LongShape && PilotTuning.Current.BladeContactBand > 0
+                    && BladeContact(p.ModProjectile?.Name))
+                    cost += BladeContactCost(point, threat.Centers[tick], halfX, halfY, PilotTuning.Current.BladeContactBand);
                 if (p.extraUpdates > 0 && !threat.LongShape)
                 {
                     // Native fast bolts check damage at every sub-update. Checking only
@@ -1500,6 +1738,9 @@ namespace MutantPilot.Common
                 {
                     float scale = threat.Scales[tick];
                     if (!ShortRayTiming.Damages(threat.ShortRayKind, scale)) continue;
+                    if(Main.getGoodWorld && clearanceReserve>0)
+                        cost+=ThreatClearance.Beam(future,N(threat.Centers[tick]),N(p.velocity),3000,22*scale,
+                            new(halfX,halfY),clearanceReserve);
                     if (!fullScan && threat.Broad is BeamBroadPhase broad)
                     {
                         beamQueries++;
@@ -1511,9 +1752,13 @@ namespace MutantPilot.Common
                 }
                 // Translate/rotate the query, never the live projectile or player.
                 int updates = p.extraUpdates + 1;
-                for (int sub = updates > 1 ? 0 : 1; sub <= updates; sub++)
+                // FTW final rings check TimeFrozen inside AI, before their movement.
+                // Hurt is checked after movement. Both positions must stay clear.
+                bool timeStopRing=Main.getGoodWorld&&boss.ai[0]==-5&&p.ModProjectile?.Name=="MutantSphereRing";
+                for (int sub = updates > 1 || timeStopRing ? 0 : 1; sub <= updates; sub++)
                 {
                     Vector2 center = Vector2.Lerp(threat.Centers[tick - 1], threat.Centers[tick], (float)sub / updates);
+                    if(followsSpin)center=spinCenter;
                     if (followsToss) center = X(tossView.Value.Position);
                     if(p.ModProjectile?.Name=="MutantRitual" && ResponseArena(tossView) is NVector candidateArena)
                         center=X(candidateArena);

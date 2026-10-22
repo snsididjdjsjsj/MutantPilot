@@ -144,6 +144,16 @@ class ReportChecks(unittest.TestCase):
         del rows[2]["nearby"]
         self.assertIsNone(self.evaluate(rows)["hit_diagnostics"][0]["source_position_error_px"])
 
+    def test_legendary_certificate_requires_master_and_for_the_worthy(self):
+        rows = self.records()
+        rows[0]["goldenStasisAllowed"] = False
+        rows[0]["difficulty"] = dict(master=True, forTheWorthy=True, legendary=True)
+        rows[-1]["goldShellTicks"] = 0
+        rows[-1]["difficulty"] = dict(master=True, forTheWorthy=False, legendary=True)
+        self.assertFalse(self.evaluate(rows)["verified_legendary_no_gold_no_hit_victory"])
+        rows[-1]["difficulty"]["forTheWorthy"] = True
+        self.assertTrue(self.evaluate(rows)["verified_legendary_no_gold_no_hit_victory"])
+
 
 if __name__ == "__main__":
     unittest.main()

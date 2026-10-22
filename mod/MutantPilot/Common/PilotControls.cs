@@ -24,14 +24,8 @@ namespace MutantPilot.Common
         }
         public static void SelectWeapon(Player player)
         {
-            int best = player.selectedItem;
-            float score = WeaponScore(player.inventory[best], player);
-            for (int i = 0; i < 10; i++)
-            {
-                float candidate = WeaponScore(player.inventory[i], player);
-                if (candidate > score * 1.05f) { best = i; score = candidate; }
-            }
-            if (score > 0) player.selectedItem = best;
+            for(int i=0;i<player.inventory.Length;i++)
+                if(player.inventory[i].ModItem?.FullName==PilotTuning.Current.PrimaryWeapon){player.selectedItem=i;return;}
         }
         static float WeaponScore(Item item, Player player)
         {
@@ -65,20 +59,25 @@ namespace MutantPilot.Common
         public static bool AimAndAttack(Player player, NPC boss)
         {
             Item weapon = player.HeldItem;
+            if(weapon.ModItem?.FullName!=PilotTuning.Current.PrimaryWeapon){player.controlUseItem=false;return false;}
             if (WeaponScore(weapon, player) <= 0) { player.controlUseItem = false; return false; }
             Vector2 target = boss.Center;
-            if (weapon.shootSpeed > 1 && weapon.type != ItemID.Zenith)
+            if (weapon.shootSpeed > 1 && weapon.type != ItemID.Zenith && weapon.ModItem?.Name!="TheDestroyer")
             {
                 float travel = Math.Min(15, Vector2.Distance(player.Center, target) / weapon.shootSpeed);
                 target += boss.velocity * travel;
             }
+            AimAt(target);
+            if (player.itemTime == 0 && player.itemAnimation == 0) player.releaseUseItem = true;
+            player.controlUseItem = true;
+            return true;
+        }
+        public static void AimAt(Vector2 target)
+        {
             Vector2 center = new(Main.screenWidth / 2f, Main.screenHeight / 2f);
             Vector2 mouse = (target - Main.screenPosition - center) * Main.GameViewMatrix.Zoom + center;
             Main.mouseX = (int)Math.Clamp(mouse.X, 0, Main.screenWidth - 1);
             Main.mouseY = (int)Math.Clamp(mouse.Y, 0, Main.screenHeight - 1);
-            if (player.itemTime == 0 && player.itemAnimation == 0) player.releaseUseItem = true;
-            player.controlUseItem = true;
-            return true;
         }
     }
 }

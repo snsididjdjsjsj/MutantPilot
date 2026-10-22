@@ -40,7 +40,7 @@ namespace MutantPilot.Common
             // false. End-of-frame is the only place that sees the real value, and it has to run every
             // frame: the dash lasts 15 ticks and the planner needs the remaining-immunity count per
             // tick, not per 15. Command polling keeps its own throttle below.
-            if (player != null && player.active && !player.dead) FargoCapabilities.Capture(player);
+            if (player != null && player.active && !player.dead) FargoCapabilities.Capture(player, frameEnd: true);
             if (directory == null || Main.GameUpdateCount % 15 != 0) return;
             try
             {
@@ -61,6 +61,9 @@ namespace MutantPilot.Common
                                 var proposed = JsonSerializer.Deserialize<PilotTuning>(command.GetProperty("settings").GetRawText()) ?? new();
                                 if (proposed.AsyncDecision) commandError = "AsyncDecision is unavailable: native collision state must stay on the game thread";
                                 else if (proposed.TriggerGoldShell) commandError = "Golden Stasis is forbidden in this controller build";
+                                else if (proposed.AllowGoldenStasis) commandError = "Golden Stasis is forbidden in this controller build";
+                                else if (proposed.TriggerBetsyDash || proposed.UseDashImmunity) commandError = "All dashes are forbidden by the current trial policy";
+                                else if (!TrialLoadout.IsAllowedWeapon(proposed.PrimaryWeapon)) commandError = "Primary weapon is outside the audited pre-Mutant list";
                                 else PilotTuning.Current = proposed;
                             }
                         }
@@ -70,6 +73,7 @@ namespace MutantPilot.Common
                 NPC boss = PilotSense.FindBoss();
                 var status = new { utc = DateTime.UtcNow, version = Mod.Version.ToString(), commandId = lastId, commandError, seed = DevelopmentSeed,
                     world = new { name = Main.worldName, width = Main.maxTilesX, height = Main.maxTilesY, surface = Main.worldSurface },
+                    difficulty=PilotWorld.DifficultySnapshot(),
                     masochist = PilotWorld.IsMasochist, assistance = PilotWorld.DescribeAssistance(player), settings = PilotTuning.Current,
                     player = player.GetModPlayer<PilotPlayer>().Snapshot(), background = BackgroundCombat.Snapshot(),
                     performance = CombatFrameTiming.LastWindow,
@@ -95,6 +99,11 @@ namespace MutantPilot.Common
         {
             switch (operation)
             {
+                case "equiptrial":
+                    try {TrialLoadout.Apply(player,command.GetProperty("weapon").GetString());}
+                    catch(Exception ex) when(ex is InvalidOperationException or ArgumentException or System.Reflection.TargetInvocationException)
+                    {commandError="Equipment setup: "+ex.Message;}
+                    break;
                 case "record":
                     try
                     {
@@ -116,8 +125,12 @@ namespace MutantPilot.Common
                             modType = item.ModItem?.FullName, item.stack, item.damage, item.useTime, item.useAnimation,
                             item.shoot, item.shootSpeed, item.pick, item.axe, item.hammer, item.mana, item.useAmmo,
                             effectiveDamage = item.damage > 0 ? player.GetWeaponDamage(item) : 0 }).Where(i => i.type > 0).ToArray(),
-                        armor = player.armor.Select((item, slot) => new { slot, item.type, item.Name,
-                            modType = item.ModItem?.FullName }).Where(i => i.type > 0).ToArray() }));
+                        armor = player.armor.Select((item, slot) => new { slot, item.type, item.Name,item.prefix,
+                            usable=player.IsItemSlotUnlockedAndUsable(slot),modType = item.ModItem?.FullName }).Where(i => i.type > 0).ToArray(),
+                        player.extraAccessory,appliedLoadout=TrialLoadout.Applied,armorSkill=FargoArmorSkill.Snapshot(),
+                        // Every active skill the equipped accessories/armour expose, with the excluded
+                        // one flagged. Read-only; Probe never presses anything.
+                        accessorySkills = FargoActiveSkill.Probe(player) }));
                     break;
                 case "summon":
                     if (!PilotWorld.IsMasochist) { commandError = "Masochist mode is not active"; break; }

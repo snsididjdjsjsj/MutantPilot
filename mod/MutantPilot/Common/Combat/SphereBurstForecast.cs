@@ -21,12 +21,15 @@ namespace MutantPilot.Combat
         public int Count { get; private set; }
 
         public void Update(int state, float ai1, float ai2, float ai3, float localAI1,
-            int spriteDirection, Vector2 center, bool masochist, bool ending = false, bool buildPaths = true)
+            int spriteDirection, Vector2 center, bool masochist, bool ending = false, bool buildPaths = true,int legendaryHyper=-1)
         {
             Count = 0; Events.Clear();
             if (state != 1 && state != -3 && state != -5) return;
             if (state == -3 && ai2 == 0) return; // random initialization not yet observed
             for (int tick = 1; tick <= CombatPlanner.ForecastTicks; tick++)
+            {
+              int updates=EncounterClock.Next(ref legendaryHyper);
+              for(int update=0;update<updates;update++)
             {
                 if (state == 1)
                 {
@@ -34,7 +37,7 @@ namespace MutantPilot.Combat
                     {
                         ai1 = masochist ? 30 : 90;
                         ++ai2;
-                        if (ai2 > (masochist ? 18 : 4)) break;
+                        if (ai2 > (masochist ? 18 : 4)) return;
                         if (ai2 <= (masochist ? 12 : 4))
                         {
                             float sign = !masochist || (int)ai2 % 2 == 0 ? 1 : -1;
@@ -53,7 +56,7 @@ namespace MutantPilot.Combat
                         Emit(tick, masochist ? 11 : 10, masochist ? 11 : 10, -.75f, offset);
                         Emit(tick, masochist ? 11 : 10, masochist ? 11 : 10, .75f, offset);
                     }
-                    if (++ai3 > duration) break;
+                    if (++ai3 > duration) return;
                 }
                 else
                 {
@@ -65,8 +68,9 @@ namespace MutantPilot.Combat
                         Emit(tick, 10, 6, -.5f, 0);
                     }
                     if (ai2 == 330 && localAI1 == 0) { localAI1 = 1; ai2 -= 780; }
-                    if (++ai2 > (masochist ? 1200 : 1020) && ending) break;
+                    if (++ai2 > (masochist ? 1200 : 1020) && ending) return;
                 }
+            }
             }
 
             void Emit(int born, int number, float speed, float spin, float offset)

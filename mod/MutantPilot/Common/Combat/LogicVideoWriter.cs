@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
+using System.Security.Cryptography;
 
 namespace MutantPilot.Combat
 {
@@ -41,15 +42,16 @@ namespace MutantPilot.Combat
                 RedirectStandardInput=true,RedirectStandardError=true};
             foreach(string arg in new[]{"-hide_banner","-loglevel","warning","-n","-f","rawvideo","-pixel_format","rgba",
                 "-video_size",$"{width}x{height}","-framerate","60","-i","pipe:0","-an",
-                "-vf","pad=ceil(iw/2)*2:ceil(ih/2)*2","-c:v","h264_nvenc","-preset","p4",
-                "-rc","vbr","-cq","18","-b:v","0","-pix_fmt","yuv420p","-fps_mode","passthrough",
-                "-movflags","+faststart",path})info.ArgumentList.Add(arg);
+                "-c:v","ffv1","-level","3","-coder","1","-context","1","-g","1",
+                "-slices","16","-slicecrc","1","-threads","4","-pix_fmt","bgra",
+                "-fps_mode","passthrough","-f","matroska",path})info.ArgumentList.Add(arg);
             encoder=new Process {StartInfo=info};
             encoder.ErrorDataReceived+=(_,e)=>{
                 if(e.Data==null)return;
                 try {lock(errors){errors.WriteLine(e.Data);errors.Flush();}}catch(ObjectDisposedException) { }
             };
-            try {encoder.Start();encoder.BeginErrorReadLine();}
+            try {encoder.Start();encoder.BeginErrorReadLine();
+                try {encoder.PriorityClass=ProcessPriorityClass.BelowNormal;}catch { }}
             catch {errors.Dispose();encoder.Dispose();throw;}
             for(int i=0;i<4;i++)free.Add(new byte[checked(width*height*4)]);
             worker=new Thread(WriteLoop) {IsBackground=true,Name="MutantPilotVideoEncoder"};worker.Start();
@@ -72,7 +74,8 @@ namespace MutantPilot.Combat
                         encoder.StandardInput.BaseStream.Write(frame.Pixels,0,frame.Pixels.Length);
                         int number=Interlocked.Increment(ref written);
                         if(number==1)first=frame.Tick;last=frame.Tick;
-                        ticks.WriteLine(JsonSerializer.Serialize(new {frame=number-1,gameTick=frame.Tick,wall=frame.Wall}));
+                        ticks.WriteLine(JsonSerializer.Serialize(new {frame=number-1,gameTick=frame.Tick,wall=frame.Wall,
+                            rgbaSha256=Convert.ToHexString(SHA256.HashData(frame.Pixels)).ToLowerInvariant()}));
                         free.Add(frame.Pixels);
                     }
                 encoder.StandardInput.Close();
@@ -90,7 +93,8 @@ namespace MutantPilot.Combat
                     File.WriteAllText(Path+".capture.json",JsonSerializer.Serialize(new {
                         format="native rendered logic frames",fps=60,width,height,frames=FramesWritten,
                         firstGameTick=first,lastGameTick=last,wallSeconds=wall.Elapsed.TotalSeconds,
-                        videoSeconds=FramesWritten/60.0,audio=false,encoder="h264_nvenc",
+                        videoSeconds=FramesWritten/60.0,audio=false,encoder="ffv1",lossless=true,sourcePixelFormat="rgba",storedPixelFormat="bgra",
+                        unscaled=true,perFrameRgbaSha256=true,
                         error=Error,outcome=JsonSerializer.Deserialize<JsonElement>(metadata)}));
                 }
                 catch(Exception ex) {Error??=ex.Message;}

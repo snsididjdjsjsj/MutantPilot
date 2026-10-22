@@ -3,6 +3,12 @@ namespace MutantPilot.Common
     // Live routing parameters can be changed between trials without rebuilding the mod.
     public sealed class PilotTuning
     {
+        public string PrimaryWeapon { get; set; } = "FargowiltasSouls/TheDestroyer";
+        public bool ReserveSpearTransition { get; set; } = true;
+        public bool ContinuousTossTravel { get; set; } = true;
+        public bool SpiralTossTravel { get; set; } = true;
+        public bool TriggerArmorSkill { get; set; } = true;
+        public int ForecastWorkers { get; set; } = System.Math.Min(8,System.Environment.ProcessorCount);
         public static PilotTuning Current { get; set; } = new();
         public bool RouteSpears { get; set; } = true;
         public bool OrbitSpheres { get; set; } = true;
@@ -12,6 +18,9 @@ namespace MutantPilot.Common
         public float HeadClearance { get; set; } = 220;
         public double BudgetMs { get; set; } = 4;
         public double RescueBudgetMs { get; set; } = 16;
+        public int RescueBeamWidth { get; set; } = 12;
+        public int RescueSegmentTicks { get; set; } = 3;
+        public bool DiverseRescue { get; set; } = true;
         public double FinalBeamBudgetMs { get; set; } = 4;
         public double FinalBeamRescueBudgetMs { get; set; } = 16;
         public float BoundaryReserve { get; set; } = 600;
@@ -27,33 +36,49 @@ namespace MutantPilot.Common
         public float FinalSparkRadius { get; set; } = 150;
         public float ThreatClearance { get; set; } = 48;
         public bool TossOrbit { get; set; } = true;
+        // State 41 locks its throw aim at ai[1] 151 and then drags two 156-tick MutantDeathray2 rays
+        // along that axis, with small bombs falling on the trail. Leave the axis during the wind-up
+        // (ai[1] < TossEarlyTicks) with a 600px perpendicular displacement instead of after the throw.
+        public bool TossEarlyLateral { get; set; } = false;
+        public int TossEarlyTicks { get; set; } = 150;
         public bool MechFanGap { get; set; } = true;
         public bool P1EyeOrbit { get; set; } = true;
         public bool HoldAttackPause { get; set; } = true;
         public float DiveClearance { get; set; } = 160;
         public bool UseNativeHurtbox { get; set; } = true;
         public bool CoupledWorms { get; set; } = true;
+        public bool LegendaryWormTravel { get; set; } = true;
         public bool OuterP1Void { get; set; } = true;
+        // Operator decision 2026-10-21: stationary equipment skills are allowed; Golden Stasis
+        // and every dash are forbidden. The harness and action entry points enforce this policy.
+        public bool AllowAccessorySkills { get; set; } = true;
         // Betsy dash grants FargoSoulsPlayer.ImmuneToDamage for its 15 ticks, which makes
         // CanBeHitByPlayerProjectile return false: no Hurt event at all. With this on, ticks still
         // inside the dash are not charged hazard cost, so the planner stops fleeing something that
         // cannot hurt it. Runtime switchable so the A/B runs one binary.
         public bool UseDashImmunity { get; set; } = false;
         // Press the Betsy active-skill key when the chosen line is already doomed inside this many
-        // ticks (Decision.FirstHit != 0 && <= value). Off by default so a baseline run is untouched.
+        // ticks (Decision.FirstHit != 0 && <= value). 0 means preemptive. Gated by
+        // AllowAccessorySkills, which is the operator's switch for the whole accessory toolkit.
         public bool TriggerBetsyDash { get; set; } = false;
         public int DashTriggerFirstHit { get; set; } = 6;
         public int DashTriggerCooldown { get; set; } = 20;
-        // Golden Stasis (the 閲戣韩 shell): 300 ticks of real immunity, 3600 tick cooldown, but it zeroes
+        // After a dash press, the player still has to finish the escape it paid for. 2026-10-20 trials:
+        // 8 of 20 hits landed 1-10 ticks after the immunity expired because the planner re-centred on
+        // its stance target. Keep the dash direction as the attractor for this many ticks afterwards.
+        public int DashRunTicks { get; set; } = 25;
+        public float DashRunDistance { get; set; } = 700;
+        // Perpendicular step away from an armed MutantDeathray2 (a 3000px line). Distance from the
+        // ray's origin is meaningless; the offset from its bearing is what kills.
+        public float RaySidestep { get; set; } = 600;
+        // Golden Stasis (the gold-shell): 300 ticks of real immunity, 3600 tick cooldown, but it zeroes
         // every movement key. That makes it the one tool in this kit that can answer a genuinely
         // unavoidable hit, so it is pressed only when the chosen line is already doomed this soon.
         public bool TriggerGoldShell { get; set; } = false;
         public int GoldShellFirstHit { get; set; } = 2;
-        // Master switch for every immunity crutch (Golden Stasis, Betsy dash). Both bypass the Hurt
-        // event through FargoSoulsPlayer.ImmuneToDamage, so a run that used either is fake no-hit and
-        // CombatSession already refuses to certify it. This switch exists so that even a mistyped arm
-        // cannot press them: every trigger site requires it AND its own flag.
-        public bool AllowImmunityCrutches { get; set; } = false;
+        // Golden Stasis is the one skill the operator excluded, so it stays unreachable: the harness
+        // rejects any tuning that arms it, and this flag is the second lock for arithmetic in code.
+        public bool AllowGoldenStasis { get; set; } = false;
         // Stand-off distance. Zenith's own projectiles reach far past 650px, so the stance no longer
         // needs to sit inside the boss's close-range attacks. Factor scales the weapon's declared
         // range; Standoff is the hard cap.
@@ -81,5 +106,10 @@ namespace MutantPilot.Common
         public bool AsyncDecision { get; set; } = false;
         // Optional additional cutoff, not a deterministic replay guarantee: the time limit still applies.
         public int ProposalBudget { get; set; } = 0;
+        // Touching a spear or sword is already a failure even when the hit itself deals 0 damage: its
+        // OnHitPlayer drops a MutantBombSmall on the player (target.Center plus up to 100px) that deals
+        // the real 500-700 damage. All seven MutantBombSmall hits recorded on 2026-10-21 were frame-0
+        // bombs spawned 20-107px from the player, i.e. blade contacts one tick earlier.
+        public float BladeContactBand { get; set; } = 220;
     }
 }

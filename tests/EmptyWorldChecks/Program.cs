@@ -3,7 +3,9 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.Json;
 
-if (args.Length != 2) throw new ArgumentException("World path and tModLoader directory required");
+if (args.Length is < 2 or > 3 || (args.Length == 3 && args[2] != "--for-the-worthy"))
+    throw new ArgumentException("World path, tModLoader directory, and optional --for-the-worthy required");
+bool forTheWorthy = args.Length == 3;
 string path = Path.GetFullPath(args[0]);
 string game = Path.GetFullPath(args[1]);
 
@@ -30,7 +32,9 @@ int left = input.ReadInt32(), right = input.ReadInt32(), top = input.ReadInt32()
 int height = input.ReadInt32(), width = input.ReadInt32(), mode = input.ReadInt32();
 Require(width == 8400 && height == 2400 && mode == 2, "Large Master world dimensions");
 Require(left == 0 && top == 0 && right == width * 16 && bottom == height * 16, "World bounds");
-Require(input.ReadBytes(8).All(x => x == 0), "Unexpected special seed");
+byte[] specialSeeds = input.ReadBytes(8);
+Require(specialSeeds.SequenceEqual(new byte[] { 0, forTheWorthy ? (byte)1 : (byte)0, 0, 0, 0, 0, 0, 0 }),
+    "Unexpected special seed");
 DateTime created = DateTime.FromBinary(input.ReadInt64());
 input.ReadByte();
 input.BaseStream.Position += 17 * 4;
@@ -100,5 +104,6 @@ object icon = Compound(Compound(Compound(root, "0header"), "modHeaders"), "Fargo
 Require(Convert.ToInt32(Get(icon, "EternityWorld")) == 1 && Convert.ToInt32(Get(icon, "MasochistWorld")) == 1,
     "World-selection difficulty flags");
 Console.WriteLine(JsonSerializer.Serialize(new { name, width, height, mode, surface, rock, spawnX, spawnY,
-    emptyCells, worldId, id, created, nativeFileMetadataAccepted = true, nativeTagIOAccepted = true,
+    emptyCells, worldId, id, created, forTheWorthy, legendary = mode == 2 && forTheWorthy,
+    nativeFileMetadataAccepted = true, nativeTagIOAccepted = true,
     masochistFlagsPreserved = maso, note = "Offline file validation; no game world was opened." }));

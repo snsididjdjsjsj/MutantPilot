@@ -1,6 +1,6 @@
 displayName = Mutant Pilot
 author = MutantPilot
-version = 0.3.97
+version = 0.3.122
 weakReferences = FargowiltasSouls@1.7.3.7
 buildIgnore = *.md, *.csproj, obj\*, bin\*
 hideCode = false

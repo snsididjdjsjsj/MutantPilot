@@ -8,6 +8,11 @@ namespace MutantPilot.Common
 {
     public static class PilotWorld
     {
+        public static bool IsLegendary => Main.masterMode && Main.getGoodWorld;
+        public static object DifficultySnapshot() => new { gameMode=Main.GameMode, expert=Main.expertMode,
+            master=Main.masterMode, forTheWorthy=Main.getGoodWorld, zenith=Main.zenithWorld, legendary=IsLegendary };
+        public static int BossHyper(NPC boss) => boss?.ModNPC?.GetType().GetField("hyper")?.GetValue(boss.ModNPC) is int value
+            ? value : -1;
         static Player inspectedPlayer;
         static PropertyInfo heroGod;
         static readonly List<(object Target, FieldInfo Field)> assistanceFields = new();

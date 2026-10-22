@@ -18,12 +18,15 @@ namespace MutantPilot.Combat
     {
         readonly List<FanRayPath> pool = new(20);
         public readonly List<FanRayPath> Paths = new(20);
-        public void Update(int state, float timer, float orientation, float age, Vector2 center, bool masochist)
+        public void Update(int state, float timer, float orientation, float age, Vector2 center, bool masochist,int legendaryHyper=-1)
         {
             Paths.Clear();
             // Its random orientation is observed, never sampled or guessed.
             if (state != 27 || orientation == 0) return;
-            for (int tick = 1; tick <= CombatPlanner.ForecastTicks; tick++, age++)
+            for (int tick = 1; tick <= CombatPlanner.ForecastTicks; tick++)
+            {
+              int updates=EncounterClock.Next(ref legendaryHyper);
+              for(int update=0;update<updates;update++,age++)
             {
                 if (age > (masochist ? 45 : 60) && age < 240 && ++timer > 10)
                 {
@@ -39,6 +42,7 @@ namespace MutantPilot.Combat
                         Add(tick, other, -8 * MathF.PI / 180 * orientation, -turn, lifetime, true);
                     }
                 }
+            }
             }
         }
         void Add(int born, Vector2 origin, float angle, float turn, int lifetime, bool masochist)

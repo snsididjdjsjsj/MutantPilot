@@ -8,6 +8,8 @@ static void Check(bool value, string message)
     Console.WriteLine("PASS " + message);
 }
 var forecast = new SphereBurstForecast();
+forecast.Update(1,1,0,0,0,1,Vector2.Zero,true,legendaryHyper:6);
+Check(forecast.Events[0].Born==1,"FTW second AI can emit a sphere ring on the current game tick");
 forecast.Update(-3, 10, 1, 60, 0, 1, Vector2.Zero, true);
 Check(forecast.Events.Select(e => e.Born).Distinct().SequenceEqual(new[] { 2, 13, 24, 35, 46 }) && forecast.Count == 110,
     "Okuu first spawn waits until age exceeds 60, then emits paired eleven-sphere rings every eleven updates");
@@ -65,10 +67,11 @@ foreach (var frame in frames)
         || now + CombatPlanner.ForecastTicks > finalTick) continue;
     var ai = frame.GetProperty("bossAI");
     // The fight may finish during this window; isolate scheduling while P3 persists.
-    if (state == -5 && ai[2].GetSingle() > 1150) continue;
+    if (state == -5 && !frame.TryGetProperty("bossHyper",out _) && ai[2].GetSingle() > 1150) continue;
     forecast.Update(state, ai[1].GetSingle(), ai[2].GetSingle(), ai[3].GetSingle(),
         frame.GetProperty("bossLocalAI")[1].GetSingle(), 1, Vector2.Zero, true,
-        frame.GetProperty("life").GetInt32() <= 1, false);
+        frame.GetProperty("life").GetInt32() <= 1, false,
+        frame.TryGetProperty("bossHyper",out var hyper)?hyper.GetInt32():-1);
     var expected = forecast.Events.GroupBy(e => e.Born).ToDictionary(g => g.Key, g => g.Sum(e => e.Count));
     for (int ahead = 1; ahead <= CombatPlanner.ForecastTicks; ahead++)
     {

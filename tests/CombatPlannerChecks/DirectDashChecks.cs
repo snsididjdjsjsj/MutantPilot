@@ -44,9 +44,28 @@ static class DirectDashChecks
         if(!fastTouch||trailTree.Touches(0,new(90,300),new(13),15))
             throw new Exception("fast final-dash trail must reach a native danger region that ordinary-speed trails do not");
         var tree=new DirectDashResponseForecast();tree.Reset(wait);
+        var prepPlayer=new MotionState(Vector2.Zero,new(18,0));
+        var prepped=DirectDashResponseForecast.Step(new(new(0,-400),Vector2.Zero,13,180,0,0,Delay:1),prepPlayer,1);
+        if(prepped.State!=14||prepped.Timer!=0||prepped.A!=null)
+            throw new Exception("predictive preparation must cross timer 180 before launching on the next AI call");
+        tree.Reset(new(new(0,-400),Vector2.Zero,13,180,0,0,Delay:1),6);
+        var firstPredictive=tree.At(tree.Advance(0,prepPlayer,1));
+        Vector2 firstVelocity=Vector2.Normalize(new Vector2(540,400))*45;
+        if(firstPredictive.State!=15||firstPredictive.A is not DirectCharge bornFirst||bornFirst.Origin!=new Vector2(0,-400)
+            ||Vector2.Distance(firstPredictive.Velocity,firstVelocity)>.001f
+            ||Vector2.Distance(firstPredictive.Position,new Vector2(0,-400)+firstVelocity)>.001f)
+            throw new Exception("FTW preparation-to-first-dash transition must predict the guaranteed first launch at the unmoved origin without sampling its random count");
+        tree.Reset(wait);
         float a=tree.Advance(0,player,1),b=tree.Advance(0,player with {Position=player.Position+new Vector2(300,0)},1);
         if(a==b||tree.At(a).Velocity==tree.At(b).Velocity)
             throw new Exception("candidate direct dash locks must keep separate histories");
+        tree.Reset(new(new(67117.44f,15981.688f),Vector2.Zero,4,0,0,0),5);
+        var spinVictim=new MotionState(new(67036.81f,15962.648f),new(-1.3125f,.60001004f));
+        float firstSpin=tree.Advance(0,spinVictim,1);
+        if(Vector2.Distance(tree.At(firstSpin).Position,new(67118.836f,15983.089f))>.02f
+            ||!tree.Touches(firstSpin,spinVictim.Position,new(13),1)
+            ||tree.Touches(firstSpin,tree.At(firstSpin).Position+new Vector2(140,0),new(13),1))
+            throw new Exception("0.3.113 first-frame native spear-spin hit must be forecast before the projectile exists, with its real 152px bounds");
         tree.Reset(new(new(60813.3f,15866.008f),new(-1.9514023f,59.96826f),23,8,1,6));
         float native=tree.Advance(0,new(new(60782.41f,15931.64f),new(-9.1875f,-10.394991f)),1);
         if(Vector2.Distance(tree.At(native).Position,new(60811.348f,15925.977f))>.02f)

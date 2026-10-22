@@ -8,6 +8,8 @@ void Check(bool ok, string message)
     Console.WriteLine("PASS " + message);
 }
 var forecast = new MarkBurstForecast();
+forecast.Update(8,1,0,MathF.PI/10,0,Vector2.Zero,true,legendaryHyper:6);
+Check(forecast.Events[0].Born==1,"FTW second AI advances the marker birth without advancing its physics twice");
 forecast.Update(-2, 1, 0, MathF.PI / 20, 39, Vector2.Zero, true);
 Check(forecast.Events.Count == 24 && forecast.Events[0].Born == 2 && forecast.Events[1].Born == 4
     && Math.Abs(forecast.Events[1].Velocity.Length() - 4) < .001f

@@ -13,12 +13,15 @@ namespace MutantPilot.Combat
         public readonly List<MarkBirth> Events = new(24);
         Vector2 center;
         public void Update(int state, float countdown, float angle, float step,
-            float emitted, Vector2 origin, bool masochist)
+            float emitted, Vector2 origin, bool masochist,int legendaryHyper=-1)
         {
             Events.Clear(); center = origin;
             if (state != -2 && state != 8) return;
             bool firstPhase = state == 8;
             for (int tick = 1; tick <= CombatPlanner.ForecastTicks; tick++)
+            {
+              int updates=EncounterClock.Next(ref legendaryHyper);
+              for(int update=0;update<updates;update++)
             {
                 if (--countdown >= 0) continue;
                 float speed = !firstPhase && masochist && emitted <= 40 ? 4 : 2;
@@ -27,7 +30,8 @@ namespace MutantPilot.Combat
                 float old = emitted++;
                 if (firstPhase ? old == 20 || emitted == 40 : old == 40 || emitted == 80 || emitted == 120)
                     angle -= step / (masochist ? 3 : 2);
-                else if (emitted >= (firstPhase ? masochist ? 60 : 40 : masochist ? 160 : 120)) break;
+                else if (emitted >= (firstPhase ? masochist ? 60 : 40 : masochist ? 160 : 120)) return;
+            }
             }
         }
         public bool Touches(Vector2 point, Vector2 playerHalf, int tick)

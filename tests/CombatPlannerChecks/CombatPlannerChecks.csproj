@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../mod/MutantPilot/Common/Combat/EocRouting.cs" Link="EocRouting.cs" />
+    <Compile Include="../../mod/MutantPilot/Common/Combat/TossRouting.cs" Link="TossRouting.cs" />
     <Compile Include="../../mod/MutantPilot/Common/Combat/SwordRouting.cs" Link="SwordRouting.cs" />
     <Compile Include="../../mod/MutantPilot/Common/Combat/P3VoidRouting.cs" Link="P3VoidRouting.cs" />
     <Compile Include="../../mod/MutantPilot/Common/Combat/RitualForecast.cs" Link="RitualForecast.cs" />

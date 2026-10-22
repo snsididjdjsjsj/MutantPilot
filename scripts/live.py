@@ -4,12 +4,14 @@ import json
 import os
 import time
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("operation", choices=("status", "prepare", "summon", "stop", "pilot", "savequit", "clean", "tune", "checkbeams", "seed", "anchor", "background", "inspect", "record"))
+    parser.add_argument("operation", choices=("status", "prepare", "summon", "stop", "pilot", "savequit", "clean", "tune", "checkbeams", "seed", "anchor", "background", "inspect", "record", "equiptrial"))
+    parser.add_argument("--weapon", choices=("FargowiltasSouls/DragonBreath2", "FargowiltasSouls/NukeFishron", "FargowiltasSouls/TheDestroyer"))
     parser.add_argument("--mode", choices=("arm", "preview", "stop"), help="Native logic-frame recording")
     parser.add_argument("--ffmpeg", type=Path, help="Absolute path to installed ffmpeg")
     parser.add_argument("--output-directory", type=Path, help="Directory for local video outputs")
@@ -29,8 +31,19 @@ def main():
             raise SystemExit("No live status. Build MutantPilot, enable it, and enter a single-player world first.")
         print(status_path.read_text(encoding="utf-8"))
         return
+    try:
+        before = json.loads(status_path.read_text(encoding="utf-8"))
+        age = (datetime.now(timezone.utc) - datetime.fromisoformat(before["utc"].replace("Z", "+00:00"))).total_seconds()
+    except (OSError, json.JSONDecodeError, KeyError, ValueError):
+        raise SystemExit("No fresh world status; enter the world before sending a command.")
+    if age > 3 or age < -1:
+        raise SystemExit("World status is stale; no command was sent.")
     args.directory.mkdir(parents=True, exist_ok=True)
     command = {"id": uuid.uuid4().hex, "op": args.operation}
+    if args.operation == "equiptrial":
+        if not args.weapon:
+            parser.error("equiptrial requires --weapon")
+        command["weapon"] = args.weapon
     if args.operation == "record":
         if args.mode is None:
             parser.error("record requires --mode")

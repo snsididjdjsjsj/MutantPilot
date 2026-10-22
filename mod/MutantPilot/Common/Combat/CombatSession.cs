@@ -23,15 +23,19 @@ namespace MutantPilot.Common
         int rejectedRecords;
         int goldShellTicks;
         int dashImmuneTicks;
+        int dashMovementTicks;
+        readonly int initialArmorPresses=FargoArmorSkill.Presses,initialArmorSpawns=FargoArmorSkill.Spawned;
+        readonly string primaryWeapon=PilotTuning.Current.PrimaryWeapon;
+        // Operator decision 2026-10-21: stationary armor skills are legal; every dash and
+        // Golden Stasis invalidate this encounter. Historical logs retain their original policy.
+        readonly bool accessorySkills = PilotTuning.Current.AllowAccessorySkills;
         static readonly JsonSerializerOptions diagnosticOptions = new() {
             NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals };
         readonly int? developmentSeed = PilotHarness.DevelopmentSeed;
-        // A real no-hit run never needs an immunity crutch. Golden Stasis AND the Betsy dash both
-        // route through FargoSoulsPlayer.ImmuneToDamage, which makes CanBeHitByProjectile return false,
-        // so both skip the Hurt event instead of dodging it. Counting only GoldShell would leave the
-        // dash as a loophole that certifies the same fake result.
+        readonly bool legendary = PilotWorld.IsLegendary;
+        // Count native movement and immunity separately so neither kind of dash can pass.
         public bool NoHitVictory => Metrics.NoHitVictory && !developmentSeed.HasValue
-            && goldShellTicks == 0 && dashImmuneTicks == 0;
+            && goldShellTicks == 0 && dashImmuneTicks == 0 && dashMovementTicks == 0;
         static System.Reflection.FieldInfo noUsingField;
         static string noUsingOwner;
 
@@ -62,7 +66,7 @@ namespace MutantPilot.Common
         public static object AttackSnapshot(Player player) => new {
             effectiveDamage = player.GetWeaponDamage(player.HeldItem),
             attackSpeed = player.GetTotalAttackSpeed(player.HeldItem.DamageType),
-            player.itemTime, player.itemAnimation, player.itemAnimationMax,
+            player.itemTime, player.itemAnimation, player.itemAnimationMax,player.reuseDelay,
             player.mouseInterface, inventoryOpen = Main.playerInventory,
             // Why an attack can be silently refused; see ItemCheck_Inner's first guard.
             controlUseItem = player.controlUseItem, player.releaseUseItem,
@@ -92,8 +96,11 @@ namespace MutantPilot.Common
                 writer = new StreamWriter(path, false, new UTF8Encoding(false));
                 Write(new { kind = "start", version = 2, controller = "live-mpc", controllerVersion = owner.Version.ToString(), bossLifeMax = boss.lifeMax,
                     weapon = player.HeldItem.Name, mods = Array.ConvertAll(ModLoader.Mods, m => m.Name + "@" + m.Version),
-                    objective = "zero-hit verified Masochist boss kill without Golden Stasis", goldenStasisAllowed = false,
-                    masochist = Metrics.TargetModeVerified,
+                    objective = "zero-hit verified Masochist boss kill; pre-Mutant weapon; no Golden Stasis or dashes; stationary armor skills allowed",
+                    dashesAllowed=false,primaryWeapon,weaponDetails=TrialLoadout.ItemSnapshot(player.HeldItem),loadoutSetup=TrialLoadout.Applied,
+                    goldenStasisAllowed = false, accessorySkillsAllowed = accessorySkills,
+                    accessorySkillPolicy = "Native stationary armor skills allowed; Golden Stasis and all dashes forbidden (operator 2026-10-21).",
+                    masochist = Metrics.TargetModeVerified, difficulty=PilotWorld.DifficultySnapshot(),
                     developmentSeed, background = BackgroundCombat.Snapshot(), collisionBroadPhase = BeamBroadPhaseCheck.Snapshot(),
                     recording = LogicFrameRecorder.Snapshot(),
                     equipmentObservation = FargoCapabilities.Snapshot(player),
@@ -116,18 +123,19 @@ namespace MutantPilot.Common
         {
             Ticks++;
             if (FargoCapabilities.GoldShellActive) { goldShellTicks++; Metrics.Invalidate(); }
-            // Same rule for the dash: it is the same ImmuneToDamage bypass, so a run that used it is
-            // not a real no-hit either.
+            // These observations disqualify a forbidden dash even if it did not produce Hurt.
             if (FargoCapabilities.DashActive) { dashImmuneTicks++; Metrics.Invalidate(); }
+            if(player.dashDelay<0){dashMovementTicks++;Metrics.Invalidate();}
+            if(player.HeldItem.ModItem?.FullName!=primaryWeapon)Metrics.Invalidate();
             Metrics.Tick(PilotWorld.HasAssistance(player));
             if (combat.SpatialAuditMismatches > 0) Metrics.Invalidate();
-            if (Ticks % 60 == 0 && !PilotWorld.IsMasochist) Metrics.Invalidate();
+            if (Ticks % 60 == 0 && (!PilotWorld.IsMasochist || PilotWorld.IsLegendary!=legendary)) Metrics.Invalidate();
             var d = combat.LastDecision;
             if (Ticks > 600 && Ticks % 6 != 0 && d.Cost < 500000 && combat.PredictionError < 1) return;
             Write(new { kind = "frame", tick = Ticks, gameTick = Main.GameUpdateCount, playerX = player.Center.X, playerY = player.Center.Y,
                 vx = player.velocity.X, vy = player.velocity.Y, bossX = boss.Center.X, bossY = boss.Center.Y,
                 attack = boss.ai[0], life = boss.life, lifeMax = boss.lifeMax, invulnerable = boss.dontTakeDamage,
-                bossAI = boss.ai, bossLocalAI = boss.localAI,
+                bossAI = boss.ai, bossLocalAI = boss.localAI, bossHyper=PilotWorld.BossHyper(boss),
                 weapon = player.HeldItem.Name, attacking, range = player.Distance(boss.Center),
                 attackTelemetry = AttackSnapshot(player),
                 goalX = combat.Goal.X, goalY = combat.Goal.Y, action = d.Move.Id,
@@ -159,11 +167,11 @@ namespace MutantPilot.Common
             if (Ticks % 300 == 0) Write(new { kind = "forecast_audit", tick = Ticks, measurements = combat.ForecastReport });
             if (Ticks % 120 == 0) writer?.Flush();
         }
-        public void Damage(int amount)
+        public void Damage(int amount,object source,bool crit)
         {
             if (closed) return;
             Metrics.Damage(amount); LastDamageTick = Ticks;
-            Write(new { kind = "damage", tick = Ticks, gameTick = Main.GameUpdateCount, amount, total = Metrics.DamageDealt });
+            Write(new { kind = "damage", tick = Ticks, gameTick = Main.GameUpdateCount, amount, total = Metrics.DamageDealt,source,crit });
         }
         public void Hurt(Player player, Player.HurtInfo info, LiveCombat combat)
         {
@@ -196,8 +204,10 @@ namespace MutantPilot.Common
             Write(new { kind = "performance", measurement = CombatFrameTiming.Finish() });
             Write(new { kind = "result", reason, ticks = Ticks, damage = Metrics.DamageDealt,
                 hits = Metrics.Hits, assisted = Metrics.Assisted, killed = Metrics.Killed,
-                masochist = Metrics.TargetModeVerified, developmentSeed, rejectedRecords,
-                goldShellTicks, dashImmuneTicks, noHitVictory = NoHitVictory });
+                masochist = Metrics.TargetModeVerified, difficulty=PilotWorld.DifficultySnapshot(), developmentSeed, rejectedRecords,
+                goldShellTicks, dashImmuneTicks,dashMovementTicks,dashesAllowed=false,primaryWeapon,accessorySkillsAllowed = accessorySkills,
+                armorSkillUsage=new {presses=FargoArmorSkill.Presses-initialArmorPresses,spawned=FargoArmorSkill.Spawned-initialArmorSpawns},
+                accessorySkillUsage = FargoActiveSkill.Snapshot(), noHitVictory = NoHitVictory });
             closed = true; writer?.Dispose(); writer = null;
         }
         void Write(object record)

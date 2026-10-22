@@ -164,12 +164,12 @@ namespace MutantPilot.Combat
                 result[t] = result[t - 1] + velocity;
             }
         }
-        public static void Ballistic(Vector2[] result, Vector2 start, Vector2 velocity, float gravity)
+        public static void Ballistic(Vector2[] result, Vector2 start, Vector2 velocity, float gravity,int legendaryHyper=-1)
         {
             result[0] = start;
             for (int t = 1; t < result.Length; t++)
             {
-                velocity.Y += gravity;
+                velocity.Y += gravity*EncounterClock.Next(ref legendaryHyper);
                 result[t] = result[t - 1] + velocity;
             }
         }

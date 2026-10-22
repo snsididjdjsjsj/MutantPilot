@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace MutantPilot.Common
@@ -124,6 +126,7 @@ namespace MutantPilot.Common
         // is stunned, so this does too.
         public static bool Trigger(Player player)
         {
+            if(!TrialLoadout.DashesAllowed)return false;
             if (!Prepare())
             {
                 if (!failed) { failed = true; ModContent.GetInstance<MutantPilot>().Logger.Warn("Betsy dash trigger unavailable: " + failure); }
@@ -166,5 +169,54 @@ namespace MutantPilot.Common
             lastTick = LastFiredTick, preparedTick,
             starts = FargoCapabilities.DashStarts, cooldown = FargoCapabilities.SpecialDashCooldown,
             hasEffect = HasEffectDash, whoAmI = WhoAmI, mainMyPlayer = MainMyPlayer };
+
+        // Read-only inventory of every active skill the accessory-effect registry exposes for this
+        // character. Nothing is pressed here: this is the diagnostic that shows which accessory and
+        // armour skills the character actually carries, and which one is excluded (Golden Stasis).
+        public static object Probe(Player player)
+        {
+            try
+            {
+                if (!ModLoader.TryGetMod("FargowiltasSouls", out Mod fargo))
+                    return new { available = false, failure = "mod missing" };
+                Type effectBase = fargo.Code.GetType("FargowiltasSouls.Core.AccessoryEffectSystem.AccessoryEffect");
+                Type effectPlayer = fargo.Code.GetType("FargowiltasSouls.Core.AccessoryEffectSystem.AccessoryEffectPlayer");
+                Type loader = fargo.Code.GetType("FargowiltasSouls.Core.AccessoryEffectSystem.AccessoryEffectLoader");
+                if (effectBase == null || effectPlayer == null || loader == null)
+                    return new { available = false, failure = "accessory effect system not found" };
+                object aep = ModPlayerOf(player, effectPlayer);
+                if (aep == null) return new { available = false, failure = "no AccessoryEffectPlayer on this player" };
+                MethodInfo equippedMethod = FindMethod(effectPlayer, "Equipped", effectBase);
+                MethodInfo activeMethod = FindMethod(effectPlayer, "Active", effectBase);
+                if (equippedMethod == null || activeMethod == null)
+                    return new { available = false, failure = "Equipped/Active not found" };
+                PropertyInfo activeSkill = effectBase.GetProperty("ActiveSkill");
+                PropertyInfo toggleType = effectBase.GetProperty("ToggleItemType");
+                FieldInfo registry = loader.GetField("AccessoryEffects", BindingFlags.Public | BindingFlags.Static);
+                if (registry?.GetValue(null) is not IEnumerable list)
+                    return new { available = false, failure = "accessory effect registry empty" };
+                var skills = new List<object>();
+                foreach (object effect in list)
+                {
+                    if (effect == null) continue;
+                    Type type = effect.GetType();
+                    if (activeSkill?.GetValue(effect) is not true) continue;
+                    int toggle = toggleType?.GetValue(effect) is int value ? value : -1;
+                    skills.Add(new { effect = type.Name,
+                        item = toggle > 0 ? Lang.GetItemName(toggle).Value : "",
+                        equipped = equippedMethod.Invoke(aep, new[] { effect }) is true,
+                        active = activeMethod.Invoke(aep, new[] { effect }) is true,
+                        // The operator excluded Golden Stasis, so mark it so a log reader can see the
+                        // one skill that is present but never pressed.
+                        forbidden = type.Name == "GoldKeyEffect" });
+                }
+                return new { available = true, dash = Snapshot(), skills = skills.ToArray() };
+            }
+            catch (Exception ex) when (ex is TargetInvocationException or InvalidOperationException
+                or ArgumentException or MissingMemberException or TypeLoadException)
+            {
+                return new { available = false, failure = ex.GetType().Name + ": " + ex.Message };
+            }
+        }
     }
 }
